@@ -2,16 +2,20 @@ import React from 'react'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { makeStyles } from '@material-ui/core/styles'
 
+import { Zoom } from '@material-ui/core'
+
 import JSLogo from '../../images/logos/js.png'
 import PythonLogo from '../../images/logos/python.png'
 import DataLogo from '../../images/logos/data.png'
+
+import SocialLinks from './SocialLinks'
 
 import Typewriter from 'typewriter-effect'
 
 const useStyles = makeStyles({
     root: {
         backgroundColor: '#263238',
-        height: '100vh',
+        height: '90vh',
     },
     pre: {
         margin: 0,
@@ -44,9 +48,12 @@ const useStyles = makeStyles({
         flexDirection: 'column',
         alignItems: 'center',
         flex: 1,
+        margin: '10px',
+        maxWidth: '350px',
     },
     topicImage: {
         width: '5vw',
+        marginBottom: '20px'
     },
 })
 
@@ -61,6 +68,7 @@ export default function Hero() {
 
     return (
         <div className={classes.root}>
+        <SocialLinks />
         <pre className={classes.pre}>
             <div className={classes.heading}>
                 {typingStage === 0 && (
@@ -113,53 +121,37 @@ export default function Hero() {
                 )}
             </div>
             <div className={classes.topicHeading}>
-                {typingStage === 2 && (
-                    <Typewriter
-                        options={{
-                            cursor: '_'
-                        }}
-                        onInit={(typewriter) => {
-                            typewriter.changeDelay(50)
-                            .changeDeleteSpeed(100)
-                            .typeString('JavaScript')
-                            .deleteAll()
-                            .typeString('Python')
-                            .deleteAll()
-                            .typeString('Data')
-                            .deleteAll()
-                            .callFunction(() => setTypingStage(3))
-                            .start()
-                        }}
-                    /> 
-                )}
-                {typingStage > 2 && (
+                {typingStage > 1 && (
                     <React.Fragment>
-                        <div className={classes.topicContainer}>
-                            <img className={classes.topicImage} src={JSLogo} alt='JavaScript' />
-                            <span> </span>
-                            <span>React</span>
-                            <span>Node</span>
-                            <span>Kubernetes</span>
-                        </div>
-                        <div className={classes.topicContainer}>
-                            <img className={classes.topicImage} src={PythonLogo} alt='Python' />
-                            <span> </span>
-                            <span>Flask</span>
-                            <span>AsyncIO</span>
-                            <span>AIOHTTP</span>
-                        </div>
-                        <div className={classes.topicContainer}>
-                            <img className={classes.topicImage} src={DataLogo} alt='Data' />
-                            <span> </span>
-                            <span>Hadoop</span>
-                            <span>Spark</span>
-                            <span>PostgreSQL</span>
-                        </div>
+                        <Zoom in>
+                            <div elevation={4} className={classes.topicContainer}>
+                                <img className={classes.topicImage} src={JSLogo} alt='JavaScript' />
+                                <span>React</span>
+                                <span>Node</span>
+                                <span>Redux</span>
+                            </div>
+                        </Zoom>
+                        <Zoom in style={{transitionDelay: '500ms'}}>
+                            <div elevation={4} className={classes.topicContainer}>
+                                <img className={classes.topicImage} src={DataLogo} alt='Data' />
+                                <span>Hadoop</span>
+                                <span>Spark</span>
+                                <span>PostgreSQL</span>
+                            </div>
+                        </Zoom>
+                        <Zoom in style={{transitionDelay: '1000ms'}}>
+                            <div elevation={4} className={classes.topicContainer}>
+                                <img className={classes.topicImage} src={PythonLogo} alt='Python' />
+                                <span>Flask</span>
+                                <span>AsyncIO</span>
+                                <span>AIOHTTP</span>
+                            </div>
+                        </Zoom>
                     </React.Fragment>
                 )}
             </div>
            <button onClick={() => {setTypingStage(0); setMinusPadding(0)}}>RESET</button>
-           <button onClick={() => {setTypingStage(3); setMinusPadding(12)}}>SKIP</button>
+           <button onClick={() => {setTypingStage(2); setMinusPadding(12)}}>SKIP</button>
         </pre>
         </div>
     )
