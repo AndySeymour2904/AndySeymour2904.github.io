@@ -1,8 +1,0 @@
-Andy Seymour
-
-Full stack web developer
-Data engineer
-
-JS - React, Node, Kubernetes
-Python - Flask, AsyncIO, AIOHTTP
-Data - Hadoop, Spark, PostgreSQL
