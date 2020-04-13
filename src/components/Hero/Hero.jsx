@@ -8,8 +8,6 @@ import Particles from 'react-particles-js'
 
 import Laptop from '../../images/laptop.png'
 
-import { AppBar, Button } from '@material-ui/core'
-
 const useStyles = makeStyles({
     root: {
         backgroundColor: '#263238',
