@@ -10,6 +10,7 @@ import 'react-vertical-timeline-component/style.min.css'
 export default function Experience() {
 
     return (
+      <div id="experience">
         <VerticalTimeline>
         <VerticalTimelineElement
           className="vertical-timeline-element--work"
@@ -102,5 +103,6 @@ export default function Experience() {
           icon={<StarIcon />}
         />
       </VerticalTimeline>
+      </div>
     )
 }

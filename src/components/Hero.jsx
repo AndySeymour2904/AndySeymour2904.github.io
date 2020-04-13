@@ -6,7 +6,7 @@ import Typewriter from 'typewriter-effect'
 
 import Particles from 'react-particles-js'
 
-import Laptop from '../../images/laptop.png'
+import Laptop from '../images/laptop.png'
 
 const useStyles = makeStyles({
     root: {
@@ -29,11 +29,13 @@ const useStyles = makeStyles({
         display: 'flex',
         flexDirection: 'column',
         paddingLeft: '5vw',
-        color: 'white',
+        color: '#EEEEEE',
         fontSize: props => props.isMaxWidth ? '48px' : '4vw',
     },
     particlesContainer: {
+        maxWidth: '100%',
         position: 'absolute',
+        overflowX: 'hidden',
     },
     laptop: {
         width: '30vw',
@@ -45,8 +47,8 @@ const useStyles = makeStyles({
         justifyContent: 'center'
     },
     heroContentContainer: {
-        width: '100vw',
-        height: '100vh',
+        width: '100%',
+        height: '100%',
         display: 'flex',
         alignItems: 'center',
         position: 'absolute',
@@ -66,8 +68,11 @@ export default function Hero() {
         SUBTITLE: 1,
     }
 
+    // 100vw gives the width with scrollbar too, particles doesn't accept %'s :(
+    const windowWidth = document.getElementById('root').getBoundingClientRect().width
+
     return (
-        <div className={classes.root}>
+        <div className={classes.root} id="hero">
             <div className={classes.particlesContainer}>
              <Particles
                 height="100vh"

@@ -12,6 +12,7 @@
     "react-particles-js": "^3.0.3",
     "react-scripts": "^3.4.1",
     "react-vertical-timeline-component": "^2.5.0",
+    "react-wordcloud": "^1.2.2",
     "typewriter-effect": "^2.13.0"
   },
   "scripts": {
