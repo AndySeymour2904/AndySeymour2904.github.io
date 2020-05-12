@@ -1,39 +1,44 @@
 {
     "work": [{
         "job": "Data team lead",
-        "dates": "05/19 - present",
+        "dates": "May 2019 - present",
         "company": "Gambit research",
         "location": "London, Hammersmith",
         "description": "Providing non-technical and technical staff with guidance on how to query large amounts of data stored with HDFS, managing ETL pipelines and enabling new data sources to be utilised. Responsible for creating and maintaining bespoke web interfaces for analysts.",
-        "skills": ["React", "Redux", "Node", "Spark", "Hadoop", "Python", "Flask", "AWS"]
+        "skills": ["React", "Spark", "Hadoop", "Python", "AWS"]
     }, {
         "job": "Frontend developer",
-        "dates": "09/17 – 05/19",
+        "dates": "September 2017 – May 2019",
         "company": "IBM - Cloud Integration Platform",
         "location": "Southampton, Hursley",
         "description": "Placed into multiple squads with tight deadlines and overhauled UIs / UX implementing new features to transition from on premise to SaaS and PaaS. Encouraged agile development such as pair programming and best practices regarding architecture and structure of the code base. Rapid development with constantly moving requirements.",
         "skills": ["React", "Redux", "Node"]
     }, {
         "job": "Full stack developer",
-        "dates": "07/16 – 09/17",
+        "dates": "July 2016 – September 2017",
         "company": "IBM - AppConnect",
         "location": "Southampton, Hursley",
         "description": "Full stack developer working across many technologies and supporting multiple microservices. Innovated UI testing in the department and encouraged use across other squads. Delivered large amounts of new complex functionality in an award-winning UI, closely working with design team.",
         "skills": ["React", "Angular", "Node"]
     }, {
         "job": "Software developer",
-        "dates": "09/15 – 07/16 ",
+        "dates": "September 2015 – July 2016",
         "company": "IBM - MQ",
         "location": "Southampton, Hursley",
         "description": "Developed new feature with third party open source library. Experiencing building code for multiple OS and integrating open source software into a large codebase. Part of innovation initiative to develop and improve systems and processes.",
         "skills": ["C", "Angular"]
     }, {
         "job": "Software engineer",
-        "dates": "09/14 – 09/15",
+        "dates": "September 2014 - September 2015",
         "company": "BAE Systems - F35 and Typhoon",
-        "location": "Preston, Warton",
+        "location": "Preston, Warton / Samlesbury",
         "description": "Display systems and controls for Typhoon, vehicular health and management system for F35. Implementing code to a very specific brief, extensive planning before developing and rigorous testing.",
-        "skills": ["Ada", "C++", "Angular"]
+        "skills": ["Ada", "C++"]
     }],
-    "education"
+    "education": [{
+        "title": "Mathematics (MSc), 1st",
+        "dates": "2010 - 2014",
+        "location": "University of Leicester",
+        "description": "Fundamental Mathematics 95% (Awarded module prize)\nLinear Algebra 95% (Awarded module prize)\nVector Calculus and Applications 94%\nLinear Statistical Models 93%\nComputing 90% (Awarded module prize)\nScientific Computing 89%\nGeometry and Imagination 85% (Awarded module prize)\nData Mining and Neural networks 85%"
+    }]
 }

@@ -2,6 +2,8 @@ import React from 'react'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { makeStyles } from '@material-ui/core/styles'
 
+import { Typography } from '@material-ui/core'
+
 import Typewriter from 'typewriter-effect'
 
 import Particles from 'react-particles-js'
@@ -30,6 +32,7 @@ const useStyles = makeStyles({
         flexDirection: 'column',
         paddingLeft: '5vw',
         color: '#EEEEEE',
+        whiteSpace: 'pre-line',
         fontSize: props => props.isMaxWidth ? '48px' : '4vw',
     },
     particlesContainer: {
@@ -100,7 +103,7 @@ export default function Hero() {
             </div>
             <div className={classes.heroContentContainer}>
                 <div className={classes.preContainer}>      
-                    <pre >
+                    <Typography>
                         <div className={classes.heading}>
                             {typingStage === typingStages.TITLE && (
                                 <Typewriter
@@ -140,7 +143,7 @@ export default function Hero() {
                                 </React.Fragment>
                             )}
                         </div>
-                    </pre>
+                    </Typography>
                 </div>    
                 <div className={classes.imageContainer}>      
                     <img src={Laptop} className={classes.laptop} />

@@ -11,3 +11,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.vertical-timeline-element--work
+.vertical-timeline-element-content {
+  border-top: 6px solid rgb(33, 150, 243);
+}
+
+.vertical-timeline-element--education
+.vertical-timeline-element-content {
+  border-top: 6px solid rgb(233, 30, 99);
+}

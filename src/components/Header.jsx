@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { AppBar, Button } from '@material-ui/core/'
+import { AppBar, Button, Typography } from '@material-ui/core/'
 
 const useStyles = makeStyles({
     appBarVariant1: {
@@ -39,6 +39,7 @@ const useStyles = makeStyles({
         fontWeight: 700,
         color: '#aeea00',
         display: 'flex',
+        cursor: 'pointer',
     },
 })
 
@@ -59,6 +60,16 @@ export default function App() {
   })
 
   const handleNavigation = id => event => {
+
+    if (id === 'home') {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        })
+
+        return
+    }
+
     const element = document.getElementById(id)
     const top = element.getBoundingClientRect().top + window.pageYOffset - window.innerHeight * 0.3
 
@@ -71,7 +82,7 @@ export default function App() {
   return (
     <AppBar classes={{root: classes[`appBarVariant${headerVariant}`]}} position="static">
         <div className={classes.contentContainer}>
-            <span onClick={handleNavigation('experience')} className={classes.title}>{headerVariant === 2 ? 'Andy Seymour' : ' '}</span>
+            <Typography onClick={handleNavigation('home')} classes={{root: classes.title}}>{headerVariant === 2 ? 'Andy Seymour' : ' '}</Typography>
             <div className={classes.buttonsContainer}>
                 <Button onClick={handleNavigation('experience')} classes={{root: classes.button}} variant="outlined">Experience</Button>
                 <Button onClick={handleNavigation('skills')} classes={{root: classes.button}} variant="outlined">Skills</Button>
