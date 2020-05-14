@@ -161,7 +161,7 @@ export default function ContactForm() {
             {status !== "SUCCESS" && status !== "PENDING" && (<Button type="submit">Send</Button>)}
             {status === "PENDING" && (<div className={classes.spinnerContainer}><CircularProgress /></div>)}
             {status === "SUCCESS" && <Typography classes={{root: classes.formspreeSuccess}}>Your message was sent successfully! I will get back to you soon</Typography>}
-            {status === "ERROR" && <Typography classes={{root: classes.formspreeError}}>There is a problem with formspree.io, please use the mail icon below instead</Typography>}
+            {status === "ERROR" && <Typography classes={{root: classes.formspreeError}}>Formspree.io is unavailable, reach me at aseymour917@gmail.com</Typography>}
         </form>
     )
   
