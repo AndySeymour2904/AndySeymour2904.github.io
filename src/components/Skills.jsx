@@ -13,7 +13,6 @@ import words from '../content/words'
 const useStyles = makeStyles({
    root: {
        backgroundColor: 'white',
-       height: '500px',
    },
    title: {
        textAlign: 'center',

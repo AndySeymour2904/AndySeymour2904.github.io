@@ -7,6 +7,7 @@ import Skills from './Skills'
 import Projects from './Projects'
 import Contact from './Contact'
 import Divider from './Divider'
+import Footer from './Footer'
 
 export default function App() {
 
@@ -22,6 +23,7 @@ export default function App() {
       <Projects />
       <Divider reverse topColor='#EEEEEE' bottomColor='white' height='150px' />
       <Contact />
+      <Footer />
     </div>
   )
 }

@@ -43,7 +43,7 @@ const useStyles = makeStyles({
     },
 })
 
-export default function App() {
+export default function Header() {
 
   const [headerVariant, setHeaderVariant] = React.useState(1)
 
