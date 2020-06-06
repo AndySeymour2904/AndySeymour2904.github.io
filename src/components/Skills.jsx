@@ -1,56 +1,62 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import { fade, makeStyles } from '@material-ui/core/styles'
 
 import { Typography, InputBase } from '@material-ui/core'
 
 import Fade from 'react-reveal/Fade'
 
+import useWindowSize from '../hooks/windowSize'
+
 import SearchIcon from '@material-ui/icons/Search'
 
 import ReactWordcloud from 'react-wordcloud'
 import words from '../content/words'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
    root: {
-       backgroundColor: 'white',
+        backgroundColor: 'white',
+        paddingLeft: theme.gutter,
+        paddingRight: theme.gutter,
+        paddingBottom: theme.padding.containerBottom,
    },
    title: {
+       paddingTop: theme.padding.titleTop,
+       paddingBottom: theme.padding.titleBottom,
        textAlign: 'center',
    },
    searchContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: '50px',
-    marginBottom: '50px',
+        display: 'flex',
+        justifyContent: 'center',
+        marginBottom: '50px',
    },
    search: {
-    position: 'relative',
-    borderRadius: '5px',
-    backgroundColor: fade('#808080', 0.15),
-    '&:hover': {
-      backgroundColor: fade('#808080', 0.25),
-    },
-    width: 'fit-content',
+        position: 'relative',
+        borderRadius: '5px',
+        backgroundColor: fade('#808080', 0.15),
+        '&:hover': {
+        backgroundColor: fade('#808080', 0.25),
+        },
+        width: 'fit-content',
   },
   searchIcon: {
-    padding: '0 14px',
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+        padding: '0 14px',
+        height: '100%',
+        position: 'absolute',
+        pointerEvents: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
   },
   inputRoot: {
-    color: 'inherit',
+        color: 'inherit',
   },
   inputInput: {
-    padding: '7px 7px 7px 0',
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + 28px)`,
-    width: '100%',
+        padding: '7px 7px 7px 0',
+        // vertical padding + font size from searchIcon
+        paddingLeft: `calc(1em + 28px)`,
+        width: '100%',
   },
-})
+}))
 
 export default function Skills() {
 
@@ -102,23 +108,34 @@ export default function Skills() {
                     />
                 </div>
             </div>
-            <Fade bottom>
-                <div className={classes.reactWordCloudContainer}>
-                    <ReactWordcloud
-                        options={{
-                            rotations: 1,
-                            enableOptimizations: true,
-                            fontSizes: [10, 100],
-                            deterministic: true,
-                            enableTooltip: false,
-                            transitionDuration: 500,
-                            rotationAngles: [0, 0],
-                            colors: ['#005073', '#107dac', '#189ad3', '1ebbd7', '#71c7ec']
-                        }}
-                        words={filteredWords}
-                    />
-                </div>
-            </Fade>
+            <WordCloud filteredWords={filteredWords} />
+            
         </div>
+    )
+}
+
+function WordCloud(props) {
+
+    const windowSize = useWindowSize()
+
+    const maxFontSize = Math.sqrt(windowSize.width) * 2
+    const minFontSize = props.filteredWords.length > 5 ? Math.max(Math.sqrt(windowSize.width) / 4, 10) : maxFontSize
+    
+    return (
+        <ReactWordcloud
+            options={{
+                rotations: 1,
+                enableOptimizations: true,
+                fontSizes: [minFontSize, maxFontSize],
+                deterministic: true,
+                enableTooltip: false,
+                transitionDuration: 500,
+                scale: 'sqrt',
+                spiral: 'rectangular',
+                rotationAngles: [0, 0],
+                colors: ['#005073', '#107dac', '#189ad3', '1ebbd7', '#71c7ec']
+            }}
+            words={props.filteredWords}
+        />
     )
 }

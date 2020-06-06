@@ -6,9 +6,11 @@
   "dependencies": {
     "@material-ui/core": "^4.9.10",
     "@material-ui/icons": "^4.9.1",
+    "material-ui-popup-state": "^1.5.4",
     "node-sass": "^4.14.1",
     "notistack": "^0.9.13",
     "react": "^16.13.1",
+    "react-debounce-render": "^6.0.0",
     "react-dom": "^16.13.1",
     "react-particles-js": "^3.0.3",
     "react-reveal": "^1.2.2",

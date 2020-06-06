@@ -2,12 +2,30 @@ import React from 'react'
 
 import { makeStyles } from '@material-ui/core/styles'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
     divider: {
-        marginTop: props => props.marginTop || 0,
         position: 'relative',
         width: '100%',
-        height: props => props.height,
+        [theme.breakpoints.only('xs')]: {
+            height: '60px',
+            marginTop: props => props.first ? '-60px' : '0px',
+        },
+        [theme.breakpoints.only('sm')]: {
+            height: '90px',
+            marginTop: props => props.first ? '-90px' : '0px',
+        },
+        [theme.breakpoints.only('md')]: {
+            height: '120px',
+            marginTop: props => props.first ? '-120px' : '0px',
+        },
+        [theme.breakpoints.only('lg')]: {
+            height: '150px',
+            marginTop: props => props.first ? '-150px' : '0px',
+        }, 
+        [theme.breakpoints.only('xl')]: {
+            height: '180px',
+            marginTop: props => props.first ? '-180px' : '0px',
+        },
         '&::before': {
             position: 'absolute',
             content: '""',
@@ -28,10 +46,9 @@ const useStyles = makeStyles({
     reverse: {
         transform: 'rotateY(180deg)',
     },
-})
+}))
 
 export default function Divider(props) {
-
     const classes= useStyles({...props})
 
     return (

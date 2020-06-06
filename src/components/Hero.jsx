@@ -1,14 +1,15 @@
 import React from 'react'
-import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { Typography } from '@material-ui/core'
+import { Typography, Button } from '@material-ui/core'
 
 import Typewriter from 'typewriter-effect'
 
 import Particles from 'react-particles-js'
 
 import Laptop from '../images/laptop.png'
+
+import useWindowSize from '../hooks/windowSize'
 
 const useStyles = makeStyles({
     root: {
@@ -20,9 +21,15 @@ const useStyles = makeStyles({
         flex: 0.5,
         margin: 0,
     },
+    intro: {
+        paddingLeft: '5vw',
+        fontSize: '2.5vw',
+        color: '#EEEEEE',
+        display: 'flex',
+    },
     heading: {
         paddingLeft: '5vw',
-        fontSize: props => props.isMaxWidth ? '96px' : '8vw',
+        fontSize: '5.5vw',
         fontWeight: 700,
         color: '#aeea00',
         display: 'flex',
@@ -33,7 +40,7 @@ const useStyles = makeStyles({
         paddingLeft: '5vw',
         color: '#EEEEEE',
         whiteSpace: 'pre-line',
-        fontSize: props => props.isMaxWidth ? '48px' : '4vw',
+        fontSize: '3vw',
     },
     particlesContainer: {
         maxWidth: '100%',
@@ -60,50 +67,71 @@ const useStyles = makeStyles({
 
 export default function Hero() {
 
-    const isMaxWidth = useMediaQuery('(min-width:1200px)')
-
     const [ typingStage, setTypingStage ] = React.useState(0)
 
-    const classes= useStyles({isMaxWidth})
+    const classes= useStyles()
+
+    const windowSize = useWindowSize()
 
     const typingStages = {
-        TITLE: 0,
-        SUBTITLE: 1,
+        INTRO: 0,
+        TITLE: 1,
+        SUBTITLE: 2,
     }
-
-    // 100vw gives the width with scrollbar too, particles doesn't accept %'s :(
-    const windowWidth = document.getElementById('root').getBoundingClientRect().width
 
     return (
         <div className={classes.root} id="hero">
             <div className={classes.particlesContainer}>
-             <Particles
-                height="100vh"
-                width="100vw"
-                params={{
-                    "particles": {
-                        "number": {
-                            "value": 50
-                        },
-                        "size": {
-                            "value": 3
-                        }
-                    },
-                    "interactivity": {
-                        "events": {
-                            "onhover": {
-                                "enable": true,
-                                "mode": "grab"
+                <Particles
+                    height="100vh"
+                    width="100vw"
+                    params={{
+                        "particles": {
+                            "number": {
+                                "value": Math.sqrt(windowSize.height * windowSize.width) / 30
+                            },
+                            "size": {
+                                "value": 3
+                            },
+                            "move": {
+                                "speed": 3
+                            },
+                            "links": {
+                                "distance": 1000
                             }
-                        }
-                    },
-                    "retina_detect": false
-                }}
-               />
+                        },
+                        "interactivity": {
+                            "events": {
+                                "onhover": {
+                                    "enable": true,
+                                    "mode": "grab"
+                                }
+                            }
+                        },
+                        "retina_detect": false
+                    }}
+                />
             </div>
             <div className={classes.heroContentContainer}>
                 <div className={classes.preContainer}>      
                     <Typography>
+                        <div className={classes.intro}>
+                            {typingStage === typingStages.INTRO && (
+                                <Typewriter
+                                    options={{
+                                        cursor: '_'
+                                    }}
+                                    onInit={(typewriter) => {
+                                        typewriter.typeString('Hi, I\'m')
+                                        .callFunction(() => setTypingStage(typingStages.TITLE))
+                                        .start()
+                                    }}
+                                />
+                            )}
+                            {typingStage > typingStages.INTRO && (
+                                <span>Hi, I'm</span>
+                            )}
+                        </div>
                         <div className={classes.heading}>
                             {typingStage === typingStages.TITLE && (
                                 <Typewriter
@@ -111,10 +139,9 @@ export default function Hero() {
                                         cursor: '_'
                                     }}
                                     onInit={(typewriter) => {
-                                        typewriter.pauseFor(1500)
-                                        .typeString('Andy Seymour')
-                                        .callFunction(() => setTypingStage(1))
-                                        .start();
+                                        typewriter.typeString('Andy Seymour')
+                                        .callFunction(() => setTypingStage(typingStages.SUBTITLE))
+                                        .start()
                                     }}
                                 />
                             )}
@@ -130,20 +157,23 @@ export default function Hero() {
                                     }}
                                     onInit={(typewriter) => {
                                         typewriter.changeDelay(75)
-                                        .typeString('Full stack web developer\nData engineer')
-                                        .callFunction(() => setTypingStage(2))
+                                        .typeString('Web developer / data engineer')
+                                        .callFunction(() => setTypingStage(typingStages.SUBTITLE + 1))
                                         .start()
                                     }}
                                 />
                             )}
                             {typingStage > typingStages.SUBTITLE && (
                                 <React.Fragment>
-                                    <span>Full stack web developer</span>
-                                    <span>Data engineer</span>
+                                    <span>Web developer / data engineer</span>
                                 </React.Fragment>
                             )}
                         </div>
                     </Typography>
+                    <div>
+                        <Button variant='contained' color='primary'>Hire me</Button>
+                        <Button variant='outlined' color='primary'>Download CV</Button>
+                    </div>
                 </div>    
                 <div className={classes.imageContainer}>      
                     <img src={Laptop} className={classes.laptop} />

@@ -14,14 +14,19 @@ import 'react-vertical-timeline-component/style.min.css'
 
 import * as experienceContent from '../content/experience'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
     root: {
-      background: '#EEEEEE'
+      background: '#EEEEEE',
+      paddingLeft: theme.gutter,
+      paddingRight: theme.gutter,
+      paddingBottom: theme.padding.containerBottom,
     },
     title: {
       textAlign: 'center',
+      paddingTop: theme.padding.titleTop,
+      paddingBottom: theme.padding.titleBottom,
     },
-})
+}))
 
 const useTimelineStyles = makeStyles({
   subtitle: {
@@ -68,7 +73,7 @@ const TimelineElementWork = (props) => {
         {props.description}
       </p>
       <div className={timelineClasses.skillsContainer}>
-        {props.skills.map(skill => <Chip classes={{root: timelineClasses.skill}} variant="outlined" color="primary" label={skill} />)}
+        {props.skills.map(skill => <Chip key={skill} classes={{root: timelineClasses.skill}} variant="outlined" color="primary" label={skill} />)}
       </div>
     </VerticalTimelineElement>
   )
@@ -106,12 +111,12 @@ export default function Experience() {
       <div id="experience" className={classes.root}>
         <Typography classes={{root: classes.title}} variant='h3'>Experience</Typography>
         <VerticalTimeline>
-          {experienceContent.work.map(work => (
-            <TimelineElementWork {...work} />
+          {experienceContent.work.map((work, index) => (
+            <TimelineElementWork key={index} {...work} />
           ))}
 
-          {experienceContent.education.map(education => (
-            <TimelineElementEducation {...education} />
+          {experienceContent.education.map((education, index) => (
+            <TimelineElementEducation key={index} {...education} />
           ))}
           <VerticalTimelineElement
             iconStyle={{ background: 'rgb(16, 204, 82)', color: '#fff' }}

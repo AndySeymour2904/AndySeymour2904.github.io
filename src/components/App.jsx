@@ -4,7 +4,7 @@ import Header from './Header'
 import Hero from './Hero'
 import Experience from './Experience'
 import Skills from './Skills'
-import Projects from './Projects'
+import AboutMe from './AboutMe'
 import Contact from './Contact'
 import Divider from './Divider'
 import Footer from './Footer'
@@ -15,13 +15,13 @@ export default function App() {
     <div>
       <Header />
       <Hero />
-      <Divider marginTop='-150px' topColor='transparent' bottomColor='#EEEEEE' height='150px' />
-      <Experience />
-      <Divider reverse topColor='#EEEEEE' bottomColor='white' height='150px' />
+      <Divider first topColor='transparent' bottomColor='#EEEEEE' />
+      <AboutMe />
+      <Divider reverse topColor='#EEEEEE' bottomColor='white' />
       <Skills />
-      <Divider topColor='white' bottomColor='#EEEEEE' height='150px' />
-      <Projects />
-      <Divider reverse topColor='#EEEEEE' bottomColor='white' height='150px' />
+      <Divider topColor='white' bottomColor='#EEEEEE' />
+      <Experience />
+      <Divider reverse topColor='#EEEEEE' bottomColor='white' />
       <Contact />
       <Footer />
     </div>

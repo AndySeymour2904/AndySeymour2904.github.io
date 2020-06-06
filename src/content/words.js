@@ -32,6 +32,10 @@ export default [
       value: 80,
     },
     {
+      text: 'Redis',
+      value: 25,
+    },
+    {
       text: 'NodeJS',
       value: 75,
     },

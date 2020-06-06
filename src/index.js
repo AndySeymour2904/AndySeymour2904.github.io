@@ -6,6 +6,7 @@ import { SnackbarProvider } from 'notistack'
 import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import ErrorIcon from '@material-ui/icons/Error'
 
+import { createMuiTheme, ThemeProvider, responsiveFontSizes } from '@material-ui/core/styles';
 
 import './index.scss'
 import App from './components/App'
@@ -22,9 +23,21 @@ const snackbarProviderProps = {
     }
 }
 
+let theme = createMuiTheme({
+    gutter: '32px',
+    padding: {
+        titleTop: '30px',
+        titleBottom: '50px',
+        containerBottom: '30px',
+    }
+})
+
+theme = responsiveFontSizes(theme)
 
 ReactDOM.render(
-    <SnackbarProvider {...snackbarProviderProps}>
-        <App />
-    </SnackbarProvider>, 
+    <ThemeProvider theme={theme}>
+        <SnackbarProvider {...snackbarProviderProps}>
+            <App />
+        </SnackbarProvider>
+    </ThemeProvider>, 
 document.getElementById('root'))
