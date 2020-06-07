@@ -3,8 +3,6 @@ import { fade, makeStyles } from '@material-ui/core/styles'
 
 import { Typography, InputBase } from '@material-ui/core'
 
-import Fade from 'react-reveal/Fade'
-
 import useWindowSize from '../hooks/windowSize'
 
 import SearchIcon from '@material-ui/icons/Search'
@@ -56,6 +54,10 @@ const useStyles = makeStyles(theme => ({
         paddingLeft: `calc(1em + 28px)`,
         width: '100%',
   },
+  wordCloudContainer: {
+        margin: '0 auto',
+        maxWidth: '1500px',
+  },
 }))
 
 export default function Skills() {
@@ -64,6 +66,13 @@ export default function Skills() {
     const [filter, setFilter] = React.useState('')
 
     const [filteredWords, setFilteredWords] = React.useState(words)
+
+    const windowSize = useWindowSize()
+
+    const effectiveCloudWidth = Math.min(windowSize.width, 1600)
+
+    const maxFontSize = Math.sqrt(effectiveCloudWidth) * 2
+    const minFontSize = filteredWords.length > 5 ? Math.max(Math.sqrt(effectiveCloudWidth) / 4, 10) : maxFontSize
 
     let timeoutHandler = null
 
@@ -108,34 +117,23 @@ export default function Skills() {
                     />
                 </div>
             </div>
-            <WordCloud filteredWords={filteredWords} />
-            
+            <div className={classes.wordCloudContainer}>
+                <ReactWordcloud
+                    options={{
+                        rotations: 1,
+                        enableOptimizations: true,
+                        fontSizes: [minFontSize, maxFontSize],
+                        deterministic: true,
+                        enableTooltip: false,
+                        transitionDuration: 500,
+                        scale: 'sqrt',
+                        spiral: 'rectangular',
+                        rotationAngles: [0, 0],
+                        colors: ['#005073', '#107dac', '#189ad3', '1ebbd7', '#71c7ec']
+                    }}
+                    words={filteredWords}
+                />
+            </div>
         </div>
-    )
-}
-
-function WordCloud(props) {
-
-    const windowSize = useWindowSize()
-
-    const maxFontSize = Math.sqrt(windowSize.width) * 2
-    const minFontSize = props.filteredWords.length > 5 ? Math.max(Math.sqrt(windowSize.width) / 4, 10) : maxFontSize
-    
-    return (
-        <ReactWordcloud
-            options={{
-                rotations: 1,
-                enableOptimizations: true,
-                fontSizes: [minFontSize, maxFontSize],
-                deterministic: true,
-                enableTooltip: false,
-                transitionDuration: 500,
-                scale: 'sqrt',
-                spiral: 'rectangular',
-                rotationAngles: [0, 0],
-                colors: ['#005073', '#107dac', '#189ad3', '1ebbd7', '#71c7ec']
-            }}
-            words={props.filteredWords}
-        />
     )
 }

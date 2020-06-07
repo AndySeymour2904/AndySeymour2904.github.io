@@ -167,5 +167,9 @@ export default [
       text: 'CSS',
       value: 60,
     },
+    {
+      text: 'Webpack',
+      value: 35,
+    },
   ];
   

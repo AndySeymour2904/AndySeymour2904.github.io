@@ -1,10 +1,10 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Menu, Popover, MenuItem, AppBar, Button, Typography, IconButton, useMediaQuery } from '@material-ui/core'
+import { Popover, MenuItem, AppBar, Button, Typography, IconButton, useMediaQuery } from '@material-ui/core'
 
 import MenuIcon from '@material-ui/icons/Menu'
 
-import { usePopupState, bindTrigger, bindMenu } from 'material-ui-popup-state/hooks'
+import { usePopupState, bindTrigger, bindPopover } from 'material-ui-popup-state/hooks'
 
 const useStyles = makeStyles(theme => ({
     appBarVariant1: {
@@ -77,6 +77,8 @@ export default function Header() {
             behavior: 'smooth'
         })
 
+        popupState.close()
+
         return
     }
 
@@ -87,6 +89,8 @@ export default function Header() {
         top,
         behavior: 'smooth'
     })
+
+    popupState.close()
   }
 
   return (
@@ -98,7 +102,7 @@ export default function Header() {
                     <IconButton className={classes.mobileMenuButton} color="inherit" aria-label="menu" {...bindTrigger(popupState)} >
                         <MenuIcon />
                     </IconButton>
-                    <Popover {...bindMenu(popupState)}  
+                    <Popover {...bindPopover(popupState)}  
                         anchorOrigin={{
                             vertical: 'bottom',
                             horizontal: 'right',
