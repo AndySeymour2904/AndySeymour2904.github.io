@@ -10,6 +10,9 @@ import Particles from 'react-particles-js'
 import Fade from 'react-reveal/Fade'
 
 import Laptop from '../images/laptop.png'
+import Hero1 from '../images/Hero1.png'
+import Hero2 from '../images/Hero2.png'
+import Hero3 from '../images/Hero3.png'
 
 import useWindowSize from '../hooks/windowSize'
 
@@ -59,13 +62,17 @@ const useStyles = makeStyles({
         overflowX: 'hidden',
     },
     laptop: {
-        width: props => props.isVerticalDesign ? '30vh' : '30vw',
-        height: props => props.isVerticalDesign ? '20vh' : '20vw',
+        width: props => props.isVerticalDesign ? 'auto' : '40vw',
+        height: props => props.isVerticalDesign ? '60vh' : 'auto',
+        maxHeight: props => props.isVerticalDesign ? '60vh' : '90vh',
+        maxWidth: props => props.isVerticalDesign ? '22.32vh' : '33.48vh',
     },
     imageContainer: {
         flex: 0.5,
         display: 'flex',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginTop: 'auto',
+        height: 'fit-content',
     },
     heroContentContainer: {
         width: '100%',
@@ -103,6 +110,12 @@ const useStyles = makeStyles({
     },
     postTypeWriterSpan: {
         margin: props => props.isVerticalDesign ? '0 auto' : 0,
+    },
+    fullHeightImageParent: {
+        height: '100%',
+        flex: 0.5,
+        display: 'flex',
+        justifyContent: 'center',
     },
 })
 
@@ -236,8 +249,10 @@ export default function Hero() {
                         </div>
                     </Fade>
                 </div>    
-                <div className={classes.imageContainer}>      
-                    <img src={Laptop} className={classes.laptop} />
+                <div className={classes.fullHeightImageParent}>
+                    <div className={classes.imageContainer}>      
+                        <img src={Hero2} className={classes.laptop} />
+                    </div>
                 </div>
             </div>
         </div>
