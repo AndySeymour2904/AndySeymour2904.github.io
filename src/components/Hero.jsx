@@ -10,9 +10,6 @@ import Particles from 'react-particles-js'
 import Fade from 'react-reveal/Fade'
 
 import Laptop from '../images/laptop.png'
-import Hero1 from '../images/Hero1.png'
-import Hero2 from '../images/Hero2.png'
-import Hero3 from '../images/Hero3.png'
 
 import useWindowSize from '../hooks/windowSize'
 
@@ -30,13 +27,6 @@ const useStyles = makeStyles({
         justifyContent: 'center',
         flex: 0.5,
         margin: 0,
-    },
-    intro: {
-        fontSize: props => props.isVerticalDesign ? '2.5vh' : '2.5vw',
-        width: 'fit-content',
-        margin: props => props.isVerticalDesign ? '0 auto' : 0,
-        color: '#EEEEEE',
-        display: 'flex',
     },
     heading: {
         fontSize: props => props.isVerticalDesign ? '5.5vh' : '5.5vw',
@@ -62,17 +52,13 @@ const useStyles = makeStyles({
         overflowX: 'hidden',
     },
     laptop: {
-        width: props => props.isVerticalDesign ? 'auto' : '40vw',
-        height: props => props.isVerticalDesign ? '60vh' : 'auto',
-        maxHeight: props => props.isVerticalDesign ? '60vh' : '90vh',
-        maxWidth: props => props.isVerticalDesign ? '22.32vh' : '33.48vh',
+        width: props => props.isVerticalDesign ? '30vh' : '30vw',
+        height: props => props.isVerticalDesign ? '20vh' : '20vw',
     },
     imageContainer: {
         flex: 0.5,
         display: 'flex',
         justifyContent: 'center',
-        marginTop: 'auto',
-        height: 'fit-content',
     },
     heroContentContainer: {
         width: '100%',
@@ -111,12 +97,6 @@ const useStyles = makeStyles({
     postTypeWriterSpan: {
         margin: props => props.isVerticalDesign ? '0 auto' : 0,
     },
-    fullHeightImageParent: {
-        height: '100%',
-        flex: 0.5,
-        display: 'flex',
-        justifyContent: 'center',
-    },
 })
 
 export default function Hero() {
@@ -134,9 +114,8 @@ export default function Hero() {
     const classes= useStyles({isVerticalDesign})
 
     const typingStages = {
-        INTRO: 0,
-        TITLE: 1,
-        SUBTITLE: 2,
+        TITLE: 0,
+        SUBTITLE: 1,
     }
 
     const handleNavigation = id => event => {
@@ -187,23 +166,6 @@ export default function Hero() {
             <div className={classes.heroContentContainer}>
                 <div className={classes.preContainer}>      
                     <Typography>
-                        <div className={classes.intro}>
-                            {typingStage === typingStages.INTRO && (
-                                <Typewriter
-                                    options={{
-                                        cursor: '_'
-                                    }}
-                                    onInit={(typewriter) => {
-                                        typewriter.typeString('Hi, I\'m')
-                                        .callFunction(() => setTypingStage(typingStages.TITLE))
-                                        .start()
-                                    }}
-                                />
-                            )}
-                            {typingStage > typingStages.INTRO && (
-                                <span className={classes.postTypeWriterSpan}>Hi, I'm</span>
-                            )}
-                        </div>
                         <div className={classes.heading}>
                             {typingStage === typingStages.TITLE && (
                                 <Typewriter
@@ -242,17 +204,15 @@ export default function Hero() {
                             )}
                         </div>
                     </Typography>
-                    <Fade left={!isVerticalDesign} bottom={isVerticalDesign} delay={7000}>
+                    <Fade left={!isVerticalDesign} bottom={isVerticalDesign} delay={5000}>
                         <div className={classes.buttonsContainer}>
                             <Button variant='contained' color='primary' classes={{root: classes.hireButton}} onClick={handleNavigation('contact')}>Hire me</Button>
-                            <Button variant='outlined' color='primary' classes={{root: classes.downloadButton}} >Download CV</Button>
+                            <Button href={process.env.PUBLIC_URL + "/AndySeymourCV.pdf"} variant='outlined' color='primary' classes={{root: classes.downloadButton}} download>Download CV</Button>
                         </div>
                     </Fade>
-                </div>    
-                <div className={classes.fullHeightImageParent}>
-                    <div className={classes.imageContainer}>      
-                        <img src={Hero2} className={classes.laptop} />
-                    </div>
+                </div>
+                <div className={classes.imageContainer}>      
+                    <img src={Laptop} className={classes.laptop} />
                 </div>
             </div>
         </div>
