@@ -8,23 +8,23 @@ const useStyles = makeStyles(theme => ({
         width: '100%',
         [theme.breakpoints.only('xs')]: {
             height: '60px',
-            marginTop: props => props.first ? '-60px' : '0px',
+            marginTop: props => props.pushUp ? '-60px' : '0px',
         },
         [theme.breakpoints.only('sm')]: {
             height: '90px',
-            marginTop: props => props.first ? '-90px' : '0px',
+            marginTop: props => props.pushUp ? '-90px' : '0px',
         },
         [theme.breakpoints.only('md')]: {
             height: '120px',
-            marginTop: props => props.first ? '-120px' : '0px',
+            marginTop: props => props.pushUp ? '-120px' : '0px',
         },
         [theme.breakpoints.only('lg')]: {
             height: '150px',
-            marginTop: props => props.first ? '-150px' : '0px',
+            marginTop: props => props.pushUp ? '-150px' : '0px',
         }, 
         [theme.breakpoints.only('xl')]: {
             height: '180px',
-            marginTop: props => props.first ? '-180px' : '0px',
+            marginTop: props => props.pushUp ? '-180px' : '0px',
         },
         '&::before': {
             position: 'absolute',

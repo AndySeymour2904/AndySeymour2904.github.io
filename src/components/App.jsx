@@ -15,9 +15,9 @@ export default function App() {
     <div>
       <Header />
       <Hero />
-      <Divider first topColor='transparent' bottomColor='#EEEEEE' />
+      <Divider pushUp topColor='transparent' bottomColor='#EEEEEE' />
       <AboutMe />
-      <Divider reverse topColor='#EEEEEE' bottomColor='white' />
+      <Divider pushUp reverse topColor='transparent' bottomColor='white' />
       <Skills />
       <Divider topColor='white' bottomColor='#EEEEEE' />
       <Experience />

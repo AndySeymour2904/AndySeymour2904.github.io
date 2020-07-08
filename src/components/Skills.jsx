@@ -12,6 +12,7 @@ import words from '../content/words'
 
 const useStyles = makeStyles(theme => ({
    root: {
+        position: 'relative',
         backgroundColor: 'white',
         paddingLeft: theme.gutter,
         paddingRight: theme.gutter,
@@ -57,17 +58,18 @@ const useStyles = makeStyles(theme => ({
   wordCloudContainer: {
         margin: '0 auto',
         maxWidth: '1500px',
+        paddingRight: '10vw',
   },
 }))
 
 export default function Skills() {
 
+    const windowSize = useWindowSize()
+
     const classes = useStyles()
     const [filter, setFilter] = React.useState('')
 
     const [filteredWords, setFilteredWords] = React.useState(words)
-
-    const windowSize = useWindowSize()
 
     const effectiveCloudWidth = Math.min(windowSize.width, 1600)
 

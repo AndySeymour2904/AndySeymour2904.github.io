@@ -16,13 +16,13 @@ const useStyles = makeStyles(theme => ({
    },
    container: {
        display: 'flex',
-       flexDirection: props => props.isVerticalDesign ? 'column' : 'row',
+       flexDirection: props => props.isVerticalDesign ? 'column-reverse' : 'column-reverse',
        margin: 'auto',
        alignItems: 'center',
        justifyContent: 'center',
    },
    contentContainer: {
-       maxWidth: '900px',
+       maxWidth: props => props.isVerticalDesign ? '100vw' : '60vw',
        flex: 1, 
        textAlign: props => props.isVerticalDesign ? 'center' : 'left',
    },
@@ -45,7 +45,8 @@ const useStyles = makeStyles(theme => ({
        maxHeight: props => props.isVerticalDesign ? '100%' : '600px',
    },
    biography: {
-       fontSize: props => props.isVerticalDesign ? 'max(2vh, 1rem)' : 'max(2vw, 1rem)',
+       fontSize: props => props.isVerticalDesign ? 'max(1.75vh, 1rem)' : 'max(1.75vw, 1rem)',
+       lineSpacing: props => props.isVerticalDesign ? 'max(3.5vh, 2rem)' : 'max(3.5vw, 2rem)',
    }
 }))
 

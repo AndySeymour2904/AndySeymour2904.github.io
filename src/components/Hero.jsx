@@ -29,6 +29,7 @@ const useStyles = makeStyles({
         margin: 0,
     },
     heading: {
+        position: 'relative',
         fontSize: props => props.isVerticalDesign ? '5.5vh' : '5.5vw',
         width: 'fit-content',
         margin: props => props.isVerticalDesign ? '0 auto' : 0,
@@ -38,6 +39,7 @@ const useStyles = makeStyles({
         textAlign: 'center',
     },
     subheading: {
+        position: 'relative',
         fontSize: props => props.isVerticalDesign ? '3vh': '3vw',
         width: 'fit-content',
         margin: props => props.isVerticalDesign ? '0 auto' : 0,
@@ -52,6 +54,7 @@ const useStyles = makeStyles({
         overflowX: 'hidden',
     },
     laptop: {
+        position: 'relative',
         width: props => props.isVerticalDesign ? '30vh' : '30vw',
         height: props => props.isVerticalDesign ? '20vh' : '20vw',
     },
@@ -66,7 +69,6 @@ const useStyles = makeStyles({
         display: 'flex',
         flexDirection: props => props.isVerticalDesign ? 'column' : 'row',
         alignItems: 'center',
-        position: 'absolute',
     },
     buttonsContainer: {
         flexDirection: props => props.isVerticalDesign ? 'column': 'row',
@@ -76,6 +78,7 @@ const useStyles = makeStyles({
         width: 'fit-content',
     },
     hireButton: {
+        position: 'relative',
         backgroundColor: '#388e3c',
         fontSize: props => props.isVerticalDesign ? "max(1.25vh, 12px)" : "max(1.25vw, 12px)",
         '&:hover': {
@@ -85,6 +88,7 @@ const useStyles = makeStyles({
         marginRight: props => props.isVerticalDesign ? 0 : 'max(1vw, 15px)',
     },
     downloadButton: {
+        position: 'relative',
         color: '#388e3c',
         borderColor: '#388e3c',
         fontSize:  props => props.isVerticalDesign ? "max(1.25vh, 12px)" : "max(1.25vw, 12px)",
@@ -130,6 +134,8 @@ export default function Hero() {
 
     }
 
+    const particleScaleFactor = Math.sqrt(windowSize.height * windowSize.width)
+
     return (
         <div className={classes.root} id="hero">
             <div className={classes.particlesContainer}>
@@ -137,29 +143,46 @@ export default function Hero() {
                     height="100vh"
                     width="100vw"
                     params={{
-                        "particles": {
-                            "number": {
-                                "value": Math.sqrt(windowSize.height * windowSize.width) / 30
+                        particles: {
+                            number: {
+                                value: particleScaleFactor / 30
                             },
-                            "size": {
-                                "value": 3
+                            collisions: {
+                                enable: false
                             },
-                            "move": {
-                                "speed": 3
+                            size: {
+                                value: 3
                             },
-                            "links": {
-                                "distance": 1000
+                            move: {
+                                speed: 3
+                            },
+                            line_linked: {
+                                enable: true,
+                                distance: Math.max(175, particleScaleFactor / 9)
                             }
                         },
-                        "interactivity": {
-                            "events": {
-                                "onhover": {
-                                    "enable": true,
-                                    "mode": "grab"
-                                }
-                            }
+                        interactivity: {
+                            events: {
+                                onhover: {
+                                    enable: true,
+                                    mode: "grab"
+                                },
+                                onClick: {
+                                    enable: true,
+                                    mode: "repulse"
+                                },
+                            },
+                            modes: {
+                                grab: {
+                                  distance: Math.max(200, particleScaleFactor / 8),
+                                },
+                                repulse: {
+                                    distance: Math.max(150, particleScaleFactor / 15),
+                                    duration: 4,
+                                },
+                            },
                         },
-                        "retina_detect": false
+                        retina_detect: false
                     }}
                 />
             </div>
