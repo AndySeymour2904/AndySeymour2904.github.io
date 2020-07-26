@@ -66,9 +66,6 @@ export default function AboutMe() {
         <div className={classes.root} id="aboutme">
             <Typography classes={{root: classes.title}} variant='h3'>About Me</Typography>
             <div className={classes.container}>
-                <div className={classes.imgContainer}>
-                    <img className={classes.img} src={Hero3} />
-                </div>
                 <div className={classes.contentContainer}>
                 <Typography classes={{root: classes.biography}}>
                     I'm a <span className={classes.highlight}>web developer</span> / <span className={classes.highlight}>data engineer</span> living in <span className={classes.highlight}>London</span>. 
