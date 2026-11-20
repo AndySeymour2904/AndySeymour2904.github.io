@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Andy Seymour, software engineer</title>
+<meta name="description" content="Software engineer in London. I write trading strategies in C++ and Python at Gambit Research.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #2335e8; --deep: #0e1a8c; --white: #ffffff; --ink: #14161c; --grey: #6b7080; --rule: #e3e5ea;
+    --pad: clamp(16px, 5vw, 72px);
+    --display: "Funnel Display", system-ui, sans-serif; --sans: "Funnel Sans", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: var(--white); color: var(--ink); font: 400 18px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-underline-offset: .2em; text-decoration-thickness: 1px; }
+  a:focus-visible, button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; border-radius: 2px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* hero */
+  .hero { position: relative; background: var(--blue); color: var(--white); min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto; padding: 22px var(--pad) clamp(28px, 5vh, 56px); overflow: hidden; }
+  .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .hero > :not(canvas) { position: relative; }
+  .top { display: flex; justify-content: space-between; align-items: baseline; font-size: 16px; }
+  .top b { font: 600 17px var(--display); letter-spacing: -.01em; }
+  .top nav { display: flex; gap: clamp(16px, 3vw, 36px); }
+  .top nav a { text-decoration: none; opacity: .82; } .top nav a:hover { opacity: 1; text-decoration: underline; }
+  .name-fallback { align-self: center; font: 700 clamp(64px, 14vw, 230px)/.9 var(--display); letter-spacing: -.045em; }
+  .js .name-fallback { visibility: hidden; }
+  .hero-foot { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px 48px; align-items: end; }
+  .hero-foot p { font: 400 clamp(20px, 2.1vw, 30px)/1.3 var(--display); letter-spacing: -.012em; max-width: 24em; text-wrap: pretty; }
+  .hero-links { display: flex; gap: 10px 28px; flex-wrap: wrap; font-size: 17px; }
+  .hero-links a { text-decoration-color: #ffffff80; } .hero-links a:hover { text-decoration-color: currentColor; }
+  @media (max-width: 760px) { .hero-foot { grid-template-columns: 1fr; } .top nav a:not(:last-child) { display: none; } }
+
+  /* body */
+  main { padding: 0 var(--pad); max-width: 1320px; margin: 0 auto; }
+  .intro { padding: clamp(80px, 13vw, 180px) 0 clamp(56px, 8vw, 110px); }
+  .intro p { font: 350 clamp(26px, 3.3vw, 46px)/1.22 var(--display); letter-spacing: -.02em; max-width: 21em; text-wrap: pretty; }
+  section { padding: clamp(48px, 7vw, 96px) 0; border-top: 1px solid var(--rule); }
+  h2 { font: 600 clamp(22px, 2vw, 28px)/1.2 var(--display); letter-spacing: -.015em; margin-bottom: 28px; }
+  .two { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 48px; }
+  @media (min-width: 960px) { .two { grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); } }
+
+  /* experience: rows with tenure bars on a shared axis */
+  .axis, .job { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px 40px; }
+  @media (min-width: 960px) { .axis, .job { grid-template-columns: minmax(0, 5fr) minmax(0, 4fr); } }
+  .axis { font-size: 13px; color: var(--grey); padding-bottom: 10px; }
+  .ticks { position: relative; height: 18px; display: none; }
+  @media (min-width: 960px) { .ticks { display: block; } }
+  .ticks span { position: absolute; transform: translateX(-50%); font-variant-numeric: tabular-nums; }
+  .job { padding: 26px 0; border-top: 1px solid var(--rule); align-items: start; }
+  .job h3 { font: 600 24px/1.2 var(--display); letter-spacing: -.015em; }
+  .job .when { color: var(--grey); font-size: 15px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .roles { list-style: none; margin-top: 16px; }
+  .roles li + li { margin-top: 14px; }
+  .roles b { font-weight: 600; } .roles p { color: #3d414c; max-width: 58ch; font-size: 17px; }
+  .track { position: relative; height: 10px; margin-top: 12px; background: repeating-linear-gradient(90deg, var(--rule) 0 1px, transparent 1px calc(100% / 16)); }
+  .track i { position: absolute; top: 0; bottom: 0; left: var(--a); width: var(--w); background: var(--blue); border-radius: 1px; }
+  .track i.open { background: linear-gradient(90deg, var(--blue) 80%, #2335e800); }
+  .job:hover .track i { background: var(--deep); }
+  .job:hover .track i.open { background: linear-gradient(90deg, var(--deep) 80%, #0e1a8c00); }
+
+  /* projects */
+  .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 40px 32px; }
+  .projects a { text-decoration: none; display: block; }
+  .shot { aspect-ratio: 8 / 5; overflow: hidden; border-radius: 6px; background: var(--rule); outline: 1px solid #0000000f; outline-offset: -1px; }
+  .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; transition: transform .6s cubic-bezier(.2, .7, .2, 1); }
+  .projects a:hover .shot img { transform: scale(1.025); }
+  .projects h3 { font: 600 21px var(--display); letter-spacing: -.01em; margin-top: 16px; }
+  .projects a:hover h3 { text-decoration: underline; text-underline-offset: .2em; text-decoration-thickness: 1px; }
+  .projects p { color: #3d414c; font-size: 16px; margin-top: 4px; }
+  .projects .host { color: var(--grey); font-size: 15px; }
+
+  .skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 24px 40px; }
+  .skills h3 { font: 600 17px var(--display); } .skills p { color: #3d414c; font-size: 17px; }
+
+  /* contact */
+  .contact { background: var(--blue); color: var(--white); padding: clamp(80px, 12vw, 160px) var(--pad) 32px; margin-top: clamp(40px, 6vw, 80px); }
+  .contact p { font: 400 clamp(20px, 2vw, 26px) var(--display); }
+  .contact .mail { display: inline-block; margin-top: 10px; font: 600 clamp(32px, 6.5vw, 104px)/1 var(--display); letter-spacing: -.04em; text-decoration: none; overflow-wrap: anywhere; background: linear-gradient(currentColor, currentColor) 0 100% / 0 3px no-repeat; transition: background-size .45s cubic-bezier(.2, .7, .2, 1); padding-bottom: 6px; }
+  .contact .mail:hover { background-size: 100% 3px; }
+  .contact .row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-top: clamp(60px, 9vw, 120px); font-size: 16px; }
+  .contact .row div { display: flex; gap: 28px; flex-wrap: wrap; }
+  .contact .row span { opacity: .7; }
+
+  @media print {
+    .hero canvas, .top nav, .shot { display: none !important; }
+    .hero, .contact { background: none; color: var(--ink); min-height: 0; padding: 0; }
+    .js .name-fallback { visibility: visible; font-size: 30pt; }
+    body { font-size: 10pt; } section, .intro { padding: 12pt 0; } .intro p { font-size: 13pt; }
+  }
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add('js')</script>
+
+<header class="hero">
+  <canvas id="signal" aria-hidden="true"></canvas>
+  <div class="top"><b>Andy Seymour</b><nav aria-label="Sections"><a href="#experience">Experience</a><a href="#projects">Projects</a><a href="#contact">Contact</a></nav></div>
+  <h1 class="name-fallback" id="name">Andy Seymour</h1>
+  <div class="hero-foot">
+    <p>Software engineer in London. I write trading strategies in C++ and Python at Gambit Research.</p>
+    <div class="hero-links"><a href="mailto:aseymour917@gmail.com">Email</a><a href="#" onclick="print();return false">CV</a><a href="https://www.linkedin.com/in/andy-seymour-86a24ab1/">LinkedIn</a><a href="https://github.com/AndySeymour2904">GitHub</a></div>
+  </div>
+</header>
+
+<main>
+  <div class="intro">
+    <p>I've spent twelve years building software that has to be right: flight systems at BAE, integration products at IBM, and for the last seven years the data platform, internal tools and now the trading strategies at Gambit Research.</p>
+  </div>
+
+  <section id="experience" aria-labelledby="exp-h">
+    <h2 id="exp-h">Experience</h2>
+    <div class="axis" aria-hidden="true"><span></span><div class="ticks" id="ticks"></div></div>
+    <div id="jobs"></div>
+  </section>
+
+  <section id="projects" aria-labelledby="proj-h">
+    <div class="two">
+      <h2 id="proj-h">Side projects</h2>
+      <div class="projects" id="projects-list"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="skills-h">
+    <div class="two">
+      <h2 id="skills-h">Skills</h2>
+      <div class="skills" id="skills"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="edu-h">
+    <div class="two">
+      <h2 id="edu-h">Education</h2>
+      <p style="font-size:20px">MSc Mathematics, first class, University of Leicester, 2014. Four module prizes, including linear algebra and computing.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="contact" id="contact">
+  <p>The quickest way to reach me is email.</p>
+  <a class="mail" href="mailto:aseymour917@gmail.com">aseymour917@gmail.com</a>
+  <div class="row"><div><a href="https://www.linkedin.com/in/andy-seymour-86a24ab1/">LinkedIn</a><a href="https://github.com/AndySeymour2904">GitHub</a><a href="https://stackoverflow.com/users/1911439/andrew-seymour">Stack Overflow</a></div><span>London, 2026</span></div>
+</footer>
+
+<script src="content.js"></script>
+<script>
+/* ---------- content ---------- */
+const C = CV, A0 = 2010, A1 = 2026.9, pct = y => ((y - A0) / (A1 - A0) * 100).toFixed(2) + '%'
+const ticks = document.getElementById('ticks')
+for (let y = 2010; y <= 2026; y += 4) ticks.append(h('span', { style: `left:${pct(y)}` }, y))
+const rows = [...C.jobs, { company: 'University of Leicester', place: 'Leicester', from: 2010, to: 2014, roles: [{ title: 'MSc Mathematics, first class', text: 'Four module prizes.' }] }]
+document.getElementById('jobs').append(...rows.map(j => h('article', { class: 'job' },
+  h('div', {}, h('h3', {}, j.company), h('p', { class: 'when' }, `${j.from} to ${j.to ?? 'now'}, ${j.place}`),
+    h('ul', { class: 'roles' }, j.roles.map(r => h('li', {}, h('b', {}, r.title), h('p', {}, r.text))))),
+  h('div', { class: 'track', role: 'img', 'aria-label': `${j.from} to ${j.to ?? 'now'}` }, h('i', { class: j.to ? '' : 'open', style: `--a:${pct(j.from)};--w:calc(${pct(j.to ?? A1)} - ${pct(j.from)})` })))))
+document.getElementById('projects-list').append(...C.projects.map(p => h('a', { href: p.url, target: '_blank', rel: 'noopener' },
+  h('div', { class: 'shot' }, h('img', { src: p.img, alt: `${p.name} screenshot`, loading: 'lazy', width: 1600, height: 1000 })),
+  h('h3', {}, p.name), h('p', {}, p.text), h('p', { class: 'host' }, p.host))))
+document.getElementById('skills').append(...C.skills.map(s => h('div', {}, h('h3', {}, s.group), h('p', {}, s.items))))
+
+/* ---------- hero: the name denoises out of noise ---------- */
+;(() => {
+  const cv = document.getElementById('signal'), hero = cv.parentElement, x = cv.getContext('2d'), nameEl = document.getElementById('name')
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+  let W, H, P = [], born = 0
+  const randn = () => { let u = 0; while (!u) u = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(6.2832 * Math.random()) }
+
+  function build() {
+    const dpr = Math.min(devicePixelRatio, 2)
+    W = cv.clientWidth; H = cv.clientHeight; cv.width = W * dpr; cv.height = H * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0)
+    // draw the name where the fallback h1 sits, fitted to the width
+    const off = document.createElement('canvas'); off.width = W; off.height = H; const o = off.getContext('2d')
+    const hr = hero.getBoundingClientRect(), nr = nameEl.getBoundingClientRect()
+    const lines = W < 700 ? ['Andy', 'Seymour'] : ['Andy Seymour']
+    const pad = parseFloat(getComputedStyle(hero).paddingLeft)
+    let fs = 200; o.font = `700 ${fs}px "Funnel Display"`; o.letterSpacing = `${-fs * .045}px`
+    const widest = Math.max(...lines.map(l => o.measureText(l).width))
+    fs = Math.min(fs * (W - pad * 2) / widest, H * .3)
+    o.font = `700 ${fs}px "Funnel Display"`; o.letterSpacing = `${-fs * .045}px`; o.fillStyle = '#000'
+    const blockH = fs * .9 * lines.length, top = (nr.top - hr.top) + (nr.height - blockH) / 2
+    lines.forEach((l, i) => o.fillText(l, pad - fs * .02, top + fs * .78 + i * fs * .9))
+    const d = o.getImageData(0, 0, W, H).data
+    // sample dots inside the glyphs (rejection sampling), plus a sparse residual field
+    const target = Math.round(Math.min(16000, W * H / 42)), pts = []
+    let tries = 0
+    while (pts.length < target && tries < target * 60) { tries++; const px = Math.random() * W | 0, py = Math.random() * H | 0; if (d[(py * W + px) * 4 + 3] > 128) pts.push([px, py, 1]) }
+    const bg = Math.round(W * H / 2600)
+    for (let i = 0; i < bg; i++) pts.push([Math.random() * W, Math.random() * H, 0])
+    P = pts.map(([tx, ty, ink]) => ({ tx, ty, ink, ex: randn(), ey: randn(), n: 1, r: ink ? .6 + Math.random() * .75 : .55 + Math.random() * .5 }))
+    born = performance.now()
+  }
+
+  const ptr = { x: -1e4, y: -1e4, on: false }
+  hero.addEventListener('pointermove', e => { const r = hero.getBoundingClientRect(); ptr.x = e.clientX - r.left; ptr.y = e.clientY - r.top; ptr.on = true })
+  hero.addEventListener('pointerleave', () => ptr.on = false)
+  let visible = true; new IntersectionObserver(e => visible = e[0].isIntersecting).observe(hero)
+
+  const STEPS = 50, DUR = 2600
+  let lastStep = -1
+  function frame(now) {
+    requestAnimationFrame(frame)
+    if (!visible || !P.length) return
+    // global schedule: discrete sampling steps, noise falls on a cosine curve
+    const k = reduced ? STEPS : Math.min(STEPS, Math.floor((now - born) / DUR * STEPS))
+    const sGlobal = Math.cos(Math.PI / 2 * k / STEPS) ** 2
+    const stepped = k !== lastStep; lastStep = k
+    const R = Math.min(W, H) * .16, scale = Math.max(W, H) * .55
+    x.clearRect(0, 0, W, H)
+    x.fillStyle = '#fff'
+    for (const p of P) {
+      let n = Math.max(sGlobal, p.n * .955)
+      if (ptr.on && !reduced) { const d = Math.hypot(p.tx - ptr.x, p.ty - ptr.y); if (d < R) n = Math.max(n, .07 * (1 - d / R) ** 1.5) }
+      p.n = n
+      // re-sample part of the noise each step (Langevin-style jitter), more while noisier
+      if ((stepped || n > .003) && n > 0.0005) { const m = Math.min(.5, .15 + n * 2); p.ex = p.ex * (1 - m) + randn() * m; p.ey = p.ey * (1 - m) + randn() * m }
+      const px = p.tx + p.ex * n * scale, py = p.ty + p.ey * n * scale
+      x.globalAlpha = p.ink ? .55 + .45 * (1 - Math.min(1, n * 3)) : .16 + .1 * n
+      const r = p.r * (p.ink ? 1 : .8)
+      x.fillRect(px - r, py - r, r * 2, r * 2)
+    }
+    x.globalAlpha = 1
+  }
+
+  const go = () => { build(); requestAnimationFrame(frame) }
+  document.fonts.load('700 100px "Funnel Display"').then(go, go)
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { const keep = born; build(); born = keep - 1e6 }, 150) })
+})()
+</script>
+</body>
+</html>
