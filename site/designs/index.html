@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design options</title>
+<style>
+  :root { --bg:#0b0c0e; --fg:#ecebe6; --mute:#85847f; --line:#222428; --acc:#ff6a3d; color-scheme: dark; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--fg); font: 16px/1.5 system-ui, sans-serif; padding: 48px 16px; }
+  main { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 28px; letter-spacing: -.02em; margin-bottom: 6px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--mute); margin: 40px 0 8px; font-weight: 600; }
+  p.sub { color: var(--mute); }
+  a { display: grid; grid-template-columns: 2.5rem 1fr auto; gap: 12px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none; }
+  a:hover b { color: var(--acc); }
+  a span.k { color: var(--mute); font-family: ui-monospace, monospace; font-size: 13px; }
+  a b { font-weight: 600; transition: color .2s; }
+  a small { display: block; color: var(--mute); font-size: 14px; margin-top: 2px; }
+  a i { font-style: normal; color: var(--mute); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Design options</h1>
+  <p class="sub">andyseymour.dev redesign. Open each one and move the cursor over the top section.</p>
+
+  <h2>Full site, career-first (current)</h2>
+  <a href="../"><span class="k">A</span><span><b>Contours</b><small>Subtle WebGL topographic field; the cursor raises a gentle rise.</small></span><i>↗</i></a>
+  <a href="../?hero=particles"><span class="k">B</span><span><b>Particles</b><small>The name is built from particles that scatter slightly from the cursor.</small></span><i>↗</i></a>
+
+  <h2>Earlier drafts (hero and projects only)</h2>
+  <a href="a.html"><span class="k">1</span><span><b>Topography, full strength</b><small>The original louder version of A.</small></span><i>↗</i></a>
+  <a href="b.html"><span class="k">2</span><span><b>Particles, light</b><small>Light Swiss layout; project screenshots follow the cursor.</small></span><i>↗</i></a>
+  <a href="c.html"><span class="k">3</span><span><b>Departures board</b><small>Split-flap board cycling name and roles; projects as a timetable.</small></span><i>↗</i></a>
+</main>
+</body>
+</html>
