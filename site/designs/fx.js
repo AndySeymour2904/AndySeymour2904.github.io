@@ -162,5 +162,148 @@
     })
   }
 
-  window.FX = { topo, particles, wave, orderbook, graph }
+
+  /* shared canvas setup */
+  const setup = (canvas, o) => {
+    const x = canvas.getContext('2d'), host = o.host || canvas.parentElement, ptr = pointer(host), st = { x, ptr, W: 0, H: 0 }
+    const size = () => { const dpr = Math.min(devicePixelRatio, 2); st.W = canvas.clientWidth; st.H = canvas.clientHeight; canvas.width = st.W * dpr; canvas.height = st.H * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0); o.onSize && o.onSize(st) }
+    size(); addEventListener('resize', size)
+    let running = false
+    const vis = watch(host, () => { if (!running) { running = true; requestAnimationFrame(loop) } })
+    const t0 = performance.now()
+    function loop(now) { if (!vis()) { running = false; return } requestAnimationFrame(loop); st.t = reduced ? 0 : (now - t0) / 1000; o.draw(st) }
+    return st
+  }
+  const rgba = (c, a) => { const [r, g, b] = hex(c).map(v => Math.round(v * 255)); return `rgba(${r},${g},${b},${a})` }
+
+  /* connecting dots network with depth */
+  function network(canvas, o = {}) {
+    const ink = o.color || '#e8eaed', acc = o.acc || '#7aa2ff'
+    let pts = []
+    o.onSize = st => {
+      const n = Math.round(Math.min(150, st.W * st.H / (o.density || 9000)))
+      pts = Array.from({ length: n }, () => ({ x: Math.random() * st.W, y: Math.random() * st.H, z: .35 + Math.random() * .65, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25 }))
+    }
+    let px = 0, py = 0
+    o.draw = st => {
+      const { x, W, H, ptr } = st
+      px += ((ptr.on ? ptr.nx : 0) - px) * .05; py += ((ptr.on ? ptr.ny : 0) - py) * .05
+      x.clearRect(0, 0, W, H)
+      const L = o.link || 150, pos = pts.map(p => {
+        if (!reduced) { p.x += p.vx; p.y += p.vy }
+        if (p.x < -20) p.x = W + 20; if (p.x > W + 20) p.x = -20; if (p.y < -20) p.y = H + 20; if (p.y > H + 20) p.y = -20
+        return [p.x - px * 40 * p.z, p.y - py * 40 * p.z, p.z]
+      })
+      x.lineWidth = 1
+      for (let i = 0; i < pos.length; i++) for (let j = i + 1; j < pos.length; j++) {
+        const dx = pos[i][0] - pos[j][0], dy = pos[i][1] - pos[j][1], d = Math.hypot(dx, dy)
+        if (d < L) { x.strokeStyle = rgba(ink, (1 - d / L) * .22 * Math.min(pos[i][2], pos[j][2])); x.beginPath(); x.moveTo(pos[i][0], pos[i][1]); x.lineTo(pos[j][0], pos[j][1]); x.stroke() }
+      }
+      if (ptr.on) for (const q of pos) {
+        const d = Math.hypot(q[0] - ptr.x, q[1] - ptr.y)
+        if (d < L * 1.3) { x.strokeStyle = rgba(acc, (1 - d / (L * 1.3)) * .7); x.beginPath(); x.moveTo(q[0], q[1]); x.lineTo(ptr.x, ptr.y); x.stroke() }
+      }
+      for (const q of pos) { const near = ptr.on && Math.hypot(q[0] - ptr.x, q[1] - ptr.y) < L * 1.3; x.fillStyle = near ? acc : rgba(ink, .35 + q[2] * .5); x.beginPath(); x.arc(q[0], q[1], 1 + q[2] * 1.6, 0, 7); x.fill() }
+    }
+    setup(canvas, o)
+  }
+
+  /* layered neural network with forward-propagating pulses */
+  function neural(canvas, o = {}) {
+    const ink = o.color || '#e8eaed', acc = o.acc || '#7aa2ff', layers = o.layers || [5, 9, 12, 9, 4]
+    let nodes = [], edges = [], pulses = [], last = 0
+    o.onSize = st => {
+      const x0 = st.W * (o.left ?? .5), x1 = st.W * (o.right ?? .94), y0 = st.H * .16, y1 = st.H * .84
+      nodes = []; edges = []
+      layers.forEach((n, li) => { for (let k = 0; k < n; k++) nodes.push({ l: li, x: x0 + (x1 - x0) * li / (layers.length - 1), y: y0 + (y1 - y0) * (n === 1 ? .5 : k / (n - 1)) * (1 - .15 * Math.abs(li - 2) / 2) + (y1 - y0) * .075 * Math.abs(li - 2) / 2, a: 0, out: [] }) })
+      nodes.forEach(a => nodes.forEach(b => { if (b.l === a.l + 1) { const e = { a, b, w: Math.random() ** 2 }; edges.push(e); a.out.push(e) } }))
+      nodes.forEach(n => n.out.sort((p, q) => q.w - p.w))
+    }
+    const fire = (n, s = 1) => { n.a = Math.min(1, n.a + s); n.out.slice(0, 3).forEach(e => { if (Math.random() < .8) pulses.push({ e, t: 0, s: s * (.6 + e.w * .4) }) }) }
+    o.draw = st => {
+      const { x, W, H, ptr, t } = st
+      x.clearRect(0, 0, W, H)
+      if (!reduced && t - last > .7) { last = t; fire(nodes[Math.floor(Math.random() * layers[0])]) }
+      if (ptr.on) for (const n of nodes) if (Math.hypot(n.x - ptr.x, n.y - ptr.y) < 34 && n.a < .3) fire(n)
+      x.lineWidth = 1
+      for (const e of edges) { x.strokeStyle = rgba(ink, .03 + e.w * .1); x.beginPath(); x.moveTo(e.a.x, e.a.y); x.lineTo(e.b.x, e.b.y); x.stroke() }
+      pulses = pulses.filter(p => {
+        p.t += .018 + p.e.w * .01
+        const { a, b } = p.e, k = Math.min(1, p.t), px = a.x + (b.x - a.x) * k, py = a.y + (b.y - a.y) * k
+        x.strokeStyle = rgba(acc, .55 * p.s); x.lineWidth = 1.5; x.beginPath(); x.moveTo(a.x + (b.x - a.x) * Math.max(0, k - .25), a.y + (b.y - a.y) * Math.max(0, k - .25)); x.lineTo(px, py); x.stroke()
+        if (k >= 1) { if (p.s > .25) fire(b, p.s * .75); else b.a = Math.min(1, b.a + p.s); return false }
+        return true
+      })
+      x.lineWidth = 1
+      for (const n of nodes) {
+        n.a *= .96
+        if (n.a > .02) { x.fillStyle = rgba(acc, n.a * .18); x.beginPath(); x.arc(n.x, n.y, 6 + n.a * 12, 0, 7); x.fill() }
+        x.fillStyle = o.bg || '#0a0b0d'; x.strokeStyle = n.a > .05 ? rgba(acc, .5 + n.a * .5) : rgba(ink, .45); x.beginPath(); x.arc(n.x, n.y, 4.2, 0, 7); x.fill(); x.stroke()
+        if (n.a > .05) { x.fillStyle = rgba(acc, n.a); x.beginPath(); x.arc(n.x, n.y, 2.4, 0, 7); x.fill() }
+      }
+    }
+    setup(canvas, o)
+  }
+
+  /* embedding space: rotating 3D clusters with labels */
+  function embedding(canvas, o = {}) {
+    const ink = o.color || '#e8eaed', acc = o.acc || '#7aa2ff'
+    const groups = o.groups || [
+      { label: 'Trading', items: ['C++', 'Python', 'Strategies', 'Pricing'], c: [1.1, .2, 0] },
+      { label: 'Data', items: ['Spark', 'Hadoop', 'Kafka', 'ETL', 'pandas'], c: [-.9, .6, .5] },
+      { label: 'Web', items: ['React', 'TypeScript', 'Node', 'Next.js'], c: [-.4, -.8, -.6] },
+      { label: 'Systems', items: ['Ada', 'C', 'Linux', 'AWS'], c: [.3, -.3, 1.1] },
+    ]
+    const g = () => { let u = 0, v = 0; while (!u) u = Math.random(); v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v) }
+    const pts = []
+    groups.forEach((gr, gi) => { for (let i = 0; i < 70; i++) pts.push({ p: gr.c.map(c => c + g() * .28), gi }); gr.items.forEach(it => pts.push({ p: gr.c.map(c => c + g() * .22), gi, label: it })) })
+    let rx = .3, ry = 0, ax = 0, ay = 0
+    o.draw = st => {
+      const { x, W, H, ptr, t } = st
+      ax += ((ptr.on ? ptr.ny * .8 : 0) - ax) * .04; ay += ((ptr.on ? ptr.nx * 1.4 : 0) - ay) * .04
+      ry = t * .08 + ay; rx = .35 + ax
+      x.clearRect(0, 0, W, H)
+      const cx = W * (o.cx ?? .68), cy = H * (o.cy ?? .5), sc = Math.min(W, H) * (o.scale ?? .3)
+      const cr = Math.cos(ry), sr = Math.sin(ry), cX = Math.cos(rx), sX = Math.sin(rx)
+      const pr = pts.map(q => { let [a, b, c] = q.p; const a1 = a * cr - c * sr, c1 = a * sr + c * cr, b1 = b * cX - c1 * sX, c2 = b * sX + c1 * cX, f = 3.2 / (3.2 + c2); return { ...q, X: cx + a1 * sc * f, Y: cy + b1 * sc * f, z: c2, f } }).sort((p, q) => q.z - p.z)
+      const hot = ptr.on ? pr.reduce((best, q) => { const d = Math.hypot(q.X - ptr.x, q.Y - ptr.y); return d < best.d ? { d, gi: q.gi } : best }, { d: 90, gi: -1 }).gi : -1
+      for (const q of pr) {
+        const on = q.gi === hot, a = Math.max(.08, Math.min(1, (1.6 - q.z) / 2.4))
+        x.fillStyle = on ? rgba(acc, a) : rgba(ink, a * .7)
+        const r = (q.label ? 2.6 : 1.3) * q.f; x.beginPath(); x.arc(q.X, q.Y, r, 0, 7); x.fill()
+        if (q.label && (on || a > .55)) { x.font = `${on ? 600 : 400} ${Math.round(11 * q.f + 1)}px "Geist Mono", monospace`; x.fillStyle = on ? acc : rgba(ink, a * .85); x.fillText(q.label, q.X + 6, q.Y + 4) }
+      }
+      groups.forEach((gr, gi) => { const q = pr.filter(p => p.gi === gi); const mX = q.reduce((s, p) => s + p.X, 0) / q.length, mY = Math.min(...q.map(p => p.Y)) - 14; x.font = '600 12px Geist, sans-serif'; x.fillStyle = gi === hot ? acc : rgba(ink, .55); x.textAlign = 'center'; x.fillText(gr.label.toUpperCase(), mX, mY); x.textAlign = 'start' })
+    }
+    setup(canvas, o)
+  }
+
+  /* attention arcs between the words of a sentence (SVG over DOM words) */
+  function attention(box, o = {}) {
+    const words = [...box.querySelectorAll('[data-w]')], NS = 'http://www.w3.org/2000/svg'
+    const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('class', 'attn'); box.prepend(svg)
+    const W = o.weights || {}
+    const weight = (i, j) => { const a = words[i].dataset.w, b = words[j].dataset.w; return W[a + '>' + b] ?? W[b + '>' + a] ?? (i === j ? 0 : .06 + .04 / Math.abs(i - j)) }
+    let cur = 0, timer
+    const show = i => {
+      cur = i; words.forEach((w, k) => w.classList.toggle('on', k === i))
+      const br = box.getBoundingClientRect(); svg.setAttribute('viewBox', `0 0 ${br.width} ${br.height}`); svg.replaceChildren()
+      const a = words[i].getBoundingClientRect(), ax = a.left + a.width / 2 - br.left, ay = a.top - br.top
+      words.forEach((w, j) => {
+        if (j === i) return
+        const ww = weight(i, j), b = w.getBoundingClientRect(), bx = b.left + b.width / 2 - br.left, by = b.top - br.top
+        const lift = Math.min(160, 30 + Math.abs(bx - ax) * .35) + Math.abs(ay - by) * .2
+        const p = document.createElementNS(NS, 'path'); p.setAttribute('d', `M${ax},${ay - 4} C${ax},${Math.min(ay, by) - lift} ${bx},${Math.min(ay, by) - lift} ${bx},${by - 4}`)
+        p.setAttribute('stroke-width', (.6 + ww * 6).toFixed(2)); p.style.opacity = (.12 + ww * .88).toFixed(2); svg.appendChild(p)
+        const len = p.getTotalLength(); p.style.strokeDasharray = len; p.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 600, easing: 'cubic-bezier(.3,0,.2,1)', fill: 'forwards' })
+        w.style.setProperty('--w', ww.toFixed(2))
+      })
+      words[i].style.setProperty('--w', 1)
+    }
+    const auto = () => { clearInterval(timer); if (!reduced) timer = setInterval(() => show((cur + 1) % words.length), 2400) }
+    words.forEach((w, i) => { w.addEventListener('pointerenter', () => { clearInterval(timer); show(i) }); w.addEventListener('pointerleave', auto) })
+    document.fonts.ready.then(() => { show(o.start ?? 0); auto() }); addEventListener('resize', () => show(cur))
+  }
+
+  window.FX = { topo, particles, wave, orderbook, graph, network, neural, embedding, attention }
 })()

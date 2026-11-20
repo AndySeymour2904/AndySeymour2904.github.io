@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI hero options · Andy Seymour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-snap-type: y proximity; }
+  body { font: 400 16px/1.5 Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; background: #000; }
+  a { color: inherit; text-decoration: none; }
+  .hero { position: relative; height: 100svh; min-height: 620px; overflow: hidden; scroll-snap-align: start; isolation: isolate; }
+  .hero > canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: -1; }
+  .tag { position: absolute; z-index: 20; left: 50%; bottom: 14px; transform: translateX(-50%); font: 500 11px "Geist Mono", monospace; letter-spacing: .06em; padding: 5px 10px; border-radius: 99px; background: #ff3d7f; color: #fff; white-space: nowrap; }
+  .in { position: relative; height: 100%; max-width: 1360px; margin: 0 auto; padding: 24px clamp(16px, 4vw, 56px) 60px; display: flex; flex-direction: column; pointer-events: none; }
+  .in a, .in [data-w] { pointer-events: auto; }
+  .bar { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+  .bar nav { display: flex; gap: clamp(14px, 2.4vw, 28px); opacity: .75; }
+  .grow { flex: 1; }
+  .cta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+  .btn { font-size: 14px; padding: 9px 16px; border-radius: 8px; border: 1px solid currentColor; opacity: .8; }
+  .btn:hover, .btn.pri { opacity: 1; }
+  .kick { font: 500 12px "Geist Mono", monospace; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 20px; }
+  .stmt { font: 300 clamp(38px, 5.6vw, 84px)/1.04 Newsreader, serif; letter-spacing: -.025em; max-width: 12em; text-wrap: balance; }
+  .stmt em { font-style: italic; }
+  .sub { font-size: clamp(16px, 1.4vw, 19px); max-width: 32em; margin-top: 20px; opacity: .72; }
+  .name { font-size: clamp(46px, 6.6vw, 104px); font-weight: 600; letter-spacing: -.05em; line-height: .95; }
+  @media (max-width: 760px) { .bar nav a:not(:last-child) { display: none; } }
+
+  /* N1 neural */
+  .n1 { background: #0a0b0d; color: #e8eaed; } .n1 .kick { color: #7aa2ff; } .n1 .btn.pri { background: #e8eaed; color: #0a0b0d; border-color: #e8eaed; }
+  .n1 .copy { max-width: 46%; } @media (max-width: 860px) { .n1 .copy { max-width: none; } .n1 > canvas { opacity: .45; } }
+  /* N2 network dark */
+  .n2 { background: #07080a; color: #eceef1; text-align: center; }
+  .n2::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse 50% 40% at 50% 50%, #07080acc, #07080a00); }
+  .n2 .center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .n2 .sub { margin-left: auto; margin-right: auto; } .n2 .cta { justify-content: center; } .n2 .btn.pri { background: #eceef1; color: #07080a; border-color: #eceef1; }
+  .n2 .role { margin-top: 14px; font: 500 13px "Geist Mono", monospace; letter-spacing: .1em; text-transform: uppercase; color: #8fb0ff; }
+  /* N3 attention */
+  .n3 { background: #f5f4f0; color: #191917; }
+  .n3 .kick { color: #6b6a64; }
+  .attn-box { position: relative; padding-top: 170px; }
+  .attn { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .attn path { fill: none; stroke: #3b5bdb; stroke-linecap: round; }
+  .n3 .stmt { max-width: 15em; font-size: clamp(36px, 5.4vw, 80px); }
+  .n3 [data-w] { cursor: default; border-radius: 6px; padding: 0 .06em; background: rgba(59, 91, 219, calc(max(var(--w, 0) - .35, 0) * .3)); transition: background .4s, color .3s; }
+  .n3 [data-w].on { color: #3b5bdb; }
+  .n3 .legend { font: 12px "Geist Mono", monospace; color: #8a8982; margin-top: 18px; }
+  .n3 .btn.pri { background: #191917; color: #f5f4f0; border-color: #191917; }
+  /* N4 embedding */
+  .n4 { background: #08090c; color: #e8eaed; } .n4 .btn.pri { background: #e8eaed; color: #08090c; border-color: #e8eaed; }
+  .n4 .copy { max-width: 42%; } .n4 .kick { color: #9ab4ff; }
+  @media (max-width: 860px) { .n4 .copy { max-width: none; } .n4 > canvas { opacity: .5; } }
+  /* N5 network on paper */
+  .n5 { background: #f4f2ec; color: #1b1a17; } .n5 .kick { color: #b5381f; } .n5 .stmt em { color: #b5381f; } .n5 .btn.pri { background: #1b1a17; color: #f4f2ec; border-color: #1b1a17; }
+  .n5::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(90deg, #f4f2ecf0 0%, #f4f2ec99 45%, #f4f2ec00 75%); }
+</style>
+</head>
+<body>
+
+<section class="hero n1">
+  <canvas data-fx="neural" data-o='{"bg":"#0a0b0d"}'></canvas>
+  <div class="in">
+    <header class="bar"><b>Andy Seymour</b><nav><a>Experience</a><a>Writing</a><a>Contact</a></nav></header>
+    <div class="grow"></div>
+    <div class="copy">
+      <p class="kick">Software Engineer · London</p>
+      <h1 class="name">Andy Seymour</h1>
+      <p class="sub">I write trading strategies in C++ and Python at Gambit Research. Previously data team lead, IBM and BAE&nbsp;Systems.</p>
+      <div class="cta"><a class="btn pri" href="mailto:aseymour917@gmail.com">Email</a><a class="btn">CV</a><a class="btn">LinkedIn</a><a class="btn">GitHub</a></div>
+    </div>
+    <div class="grow"></div>
+  </div>
+  <span class="tag">N1 · Neural net, signals propagate; hover nodes to fire them</span>
+</section>
+
+<section class="hero n2">
+  <canvas data-fx="network" data-o='{"color":"#dfe5ee","acc":"#8fb0ff","density":8000,"link":140}'></canvas>
+  <div class="in">
+    <header class="bar" style="text-align:left"><b>Andy Seymour</b><nav><a>Experience</a><a>Writing</a><a>Contact</a></nav></header>
+    <div class="center">
+      <h1 class="name">Andy Seymour</h1>
+      <p class="role">Software Engineer</p>
+      <p class="sub">Trading strategies in C++ and Python at Gambit Research. Previously data team lead, IBM and BAE&nbsp;Systems.</p>
+      <div class="cta"><a class="btn pri" href="mailto:aseymour917@gmail.com">Email</a><a class="btn">CV</a><a class="btn">LinkedIn</a></div>
+    </div>
+  </div>
+  <span class="tag">N2 · Connecting dots, refined (your original idea)</span>
+</section>
+
+<section class="hero n3">
+  <div class="in">
+    <header class="bar"><b>Andy Seymour</b><nav><a>Experience</a><a>Writing</a><a>Contact</a></nav></header>
+    <div class="grow"></div>
+    <p class="kick">Software Engineer · London</p>
+    <div class="attn-box" id="attn">
+      <h1 class="stmt"><span data-w="I">I</span> <span data-w="write">write</span> <span data-w="trading">trading</span> <span data-w="strategies">strategies</span> <span data-w="in">in</span> <span data-w="C++">C++</span> <span data-w="and">and</span> <span data-w="Python">Python.</span></h1>
+    </div>
+    <p class="sub">Software engineer at Gambit Research, where I previously led the data team. Before that, IBM and BAE&nbsp;Systems.</p>
+    <div class="cta"><a class="btn pri" href="mailto:aseymour917@gmail.com">Email</a><a class="btn">CV</a><a class="btn">LinkedIn</a><a class="btn">GitHub</a></div>
+    <p class="legend">Hover a word to see what it attends to</p>
+  </div>
+  <span class="tag">N3 · Attention arcs over the headline</span>
+</section>
+
+<section class="hero n4">
+  <canvas data-fx="embedding" data-o='{"color":"#dfe3ea","acc":"#9ab4ff","scale":0.22,"cy":0.54}'></canvas>
+  <div class="in">
+    <header class="bar"><b>Andy Seymour</b><nav><a>Experience</a><a>Writing</a><a>Contact</a></nav></header>
+    <div class="grow"></div>
+    <div class="copy">
+      <p class="kick">Software Engineer · London</p>
+      <h1 class="name">Andy Seymour</h1>
+      <p class="sub">I write trading strategies in C++ and Python at Gambit Research. Previously data team lead, IBM and BAE&nbsp;Systems.</p>
+      <div class="cta"><a class="btn pri" href="mailto:aseymour917@gmail.com">Email</a><a class="btn">CV</a><a class="btn">LinkedIn</a></div>
+    </div>
+    <div class="grow"></div>
+  </div>
+  <span class="tag">N4 · Embedding space of skills; move to rotate, hover a cluster</span>
+</section>
+
+<section class="hero n5">
+  <canvas data-fx="network" data-o='{"color":"#1b1a17","acc":"#b5381f","density":9500,"link":150}'></canvas>
+  <div class="in">
+    <header class="bar"><b>Andy Seymour</b><nav><a>Experience</a><a>Writing</a><a>Contact</a></nav></header>
+    <div class="grow"></div>
+    <p class="kick">Software Engineer · London</p>
+    <h1 class="stmt">I write <em>trading strategies</em> in C++ and Python.</h1>
+    <p class="sub">Software engineer at Gambit Research, where I previously led the data team. Before that, IBM and BAE&nbsp;Systems.</p>
+    <div class="cta"><a class="btn pri" href="mailto:aseymour917@gmail.com">Email</a><a class="btn">CV</a><a class="btn">LinkedIn</a><a class="btn">GitHub</a></div>
+  </div>
+  <span class="tag">N5 · Connecting dots on paper + serif statement</span>
+</section>
+
+<script src="content.js"></script>
+<script src="fx.js"></script>
+<script>
+document.querySelectorAll('[data-fx]').forEach(el => {
+  const o = JSON.parse(el.dataset.o || '{}'); o.host = el.closest('.hero')
+  FX[el.dataset.fx](el, o)
+})
+FX.attention(document.getElementById('attn'), { start: 3, weights: {
+  'strategies>trading': .95, 'strategies>write': .7, 'strategies>Python': .45, 'strategies>C++': .45,
+  'write>I': .9, 'write>strategies': .7, 'write>C++': .3, 'write>Python': .3,
+  'trading>strategies': .95, 'trading>write': .25,
+  'C++>Python': .9, 'C++>in': .5, 'Python>and': .4, 'C++>strategies': .4, 'Python>strategies': .4,
+  'in>C++': .6, 'in>Python': .5, 'and>C++': .6, 'and>Python': .6, 'I>write': .9,
+} })
+</script>
+</body>
+</html>
