@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B · Particles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;800;900&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#efede7; --fg:#0f0f0f; --mute:#77756f; --line:#d6d3ca; --acc:#2b3df5; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font: 400 17px/1.5 "Inter Tight", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  .mono { font: 400 12px/1.4 "JetBrains Mono", monospace; letter-spacing: .03em; color: var(--mute); }
+
+  .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 0 clamp(12px, 2vw, 24px); padding: 0 clamp(16px, 3vw, 40px); }
+  .top { padding-top: 22px; padding-bottom: 22px; align-items: start; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .top > :nth-child(1) { grid-column: 1 / 4; font-weight: 600; }
+  .top > :nth-child(2) { grid-column: 4 / 7; color: var(--mute); }
+  .top > :nth-child(3) { grid-column: 7 / 10; color: var(--mute); }
+  .top > nav { grid-column: 10 / 13; display: flex; justify-content: end; gap: 22px; }
+  .top nav a:hover { color: var(--acc); }
+
+  .hero { position: relative; height: calc(100svh - 64px); min-height: 520px; }
+  #p { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
+  .hero .grid { position: absolute; inset: auto 0 28px; pointer-events: none; align-items: end; }
+  .hero .lead { grid-column: 1 / 6; font-size: clamp(18px, 1.7vw, 24px); line-height: 1.3; font-weight: 500; letter-spacing: -.01em; }
+  .hero .hint { grid-column: 10 / 13; text-align: right; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+  .work { padding-top: clamp(64px, 10vw, 140px); padding-bottom: 120px; }
+  .work-h { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 28px; }
+  .work-h h2 { font-size: clamp(14px, 1.2vw, 16px); font-weight: 500; }
+  .rows { grid-column: 1 / -1; list-style: none; border-top: 1px solid var(--fg); }
+  .row { display: grid; grid-template-columns: repeat(12, 1fr); gap: 0 clamp(12px, 2vw, 24px); align-items: baseline; padding: 22px 0; border-bottom: 1px solid var(--line); cursor: pointer; transition: padding .4s cubic-bezier(.2,.8,.2,1), color .3s; }
+  .row .n { grid-column: 1 / 2; }
+  .row h3 { grid-column: 2 / 8; font-size: clamp(34px, 6.5vw, 96px); font-weight: 800; letter-spacing: -.05em; line-height: .95; transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+  .row .d { grid-column: 8 / 12; color: var(--mute); font-size: 15px; }
+  .row .y { grid-column: 12 / 13; text-align: right; }
+  .row:hover { color: var(--acc); }
+  .row:hover h3 { transform: translateX(14px); }
+  .float { position: fixed; left: 0; top: 0; width: min(440px, 38vw); aspect-ratio: 16/10; pointer-events: none; z-index: 9; border-radius: 6px; overflow: hidden; opacity: 0; transform: translate(-50%, -50%) scale(.85); transition: opacity .25s, transform .35s cubic-bezier(.2,.8,.2,1); box-shadow: 0 30px 60px -20px #0006; }
+  .float.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  .float img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; opacity: 0; transition: opacity .3s; }
+  .float img.on { opacity: 1; }
+  @media (max-width: 760px) {
+    .top > :nth-child(2), .top > :nth-child(3) { display: none; }
+    .top > :nth-child(1) { grid-column: 1 / 7; } .top > nav { grid-column: 7 / 13; gap: 14px; }
+    .hero .lead { grid-column: 1 / -1; } .hero .hint { display: none; }
+    .row h3 { grid-column: 2 / -1; } .row .d { grid-column: 2 / -1; margin-top: 6px; } .row .y { display: none; }
+  }
+</style>
+</head>
+<body>
+<header class="grid top">
+  <span>Andy Seymour</span>
+  <span>Software &amp; data engineer</span>
+  <span>London, UK</span>
+  <nav><a href="#work">Work</a><a href="#">About</a><a href="#">Contact</a></nav>
+</header>
+
+<section class="hero">
+  <canvas id="p" aria-hidden="true"></canvas>
+  <h1 class="sr">Andy Seymour</h1>
+  <div class="grid">
+    <p class="lead">I build data pipelines and the products on top of them. Data Team Lead at Gambit Research. Previously IBM and BAE&nbsp;Systems.</p>
+    <p class="hint mono">Move the cursor through the type</p>
+  </div>
+</section>
+
+<section class="grid work" id="work">
+  <div class="work-h"><h2>Selected work</h2><span class="mono">(04)</span></div>
+  <ol class="rows">
+    <li class="row" data-img="0"><span class="n mono">01</span><h3>FPL Outlook</h3><span class="d">Fantasy Premier League planner fed by five live data sources</span><span class="y mono">Live</span></li>
+    <li class="row" data-img="1"><span class="n mono">02</span><h3>What's Live</h3><span class="d">Every live sport on UK TV, in one calendar</span><span class="y mono">Live</span></li>
+    <li class="row" data-img="2"><span class="n mono">03</span><h3>TOPIK Trainer</h3><span class="d">Korean reading practice on 480 past-paper questions</span><span class="y mono">Live</span></li>
+    <li class="row"><span class="n mono">04</span><h3>Odds movement</h3><span class="d">Betfair pre-match price research, tested out of sample</span><span class="y mono">Research</span></li>
+  </ol>
+</section>
+<div class="float" id="float"><img src="../img/fpl.jpg" alt=""><img src="../img/whatslive.jpg" alt=""><img src="../img/topik.jpg" alt=""></div>
+
+<script>
+(() => {
+  const c = document.getElementById('p'), x = c.getContext('2d')
+  let W, H, dpr, pts = [], mouse = { x: -9999, y: -9999 }
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+  const build = () => {
+    dpr = Math.min(devicePixelRatio, 2)
+    W = c.clientWidth; H = c.clientHeight
+    c.width = W * dpr; c.height = H * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0)
+    const off = document.createElement('canvas'); off.width = W; off.height = H
+    const o = off.getContext('2d')
+    const lines = ['ANDY', 'SEYMOUR']
+    let fs = Math.min(W * .25, H * .36)
+    o.font = `900 ${fs}px "Inter Tight"`
+    const widest = Math.max(...lines.map(l => o.measureText(l).width))
+    fs *= Math.min(1, (W * .94) / widest); o.font = `900 ${fs}px "Inter Tight"`
+    o.textBaseline = 'alphabetic'; o.fillStyle = '#000'
+    const lh = fs * .84, top = H * .06
+    lines.forEach((l, i) => o.fillText(l, W * .03 - fs * .02, top + fs * .78 + i * lh))
+    const d = o.getImageData(0, 0, W, H).data
+    const step = Math.max(3, Math.round(W / 360))
+    const old = pts; pts = []
+    for (let yy = 0; yy < H; yy += step) for (let xx = 0; xx < W; xx += step) {
+      if (d[(yy * W + xx) * 4 + 3] > 128) {
+        const p = old[pts.length] || { x: Math.random() * W, y: Math.random() * H, vx: 0, vy: 0 }
+        p.hx = xx; p.hy = yy; p.r = step * .5; p.a = Math.random() < .035
+        pts.push(p)
+      }
+    }
+  }
+  document.fonts.ready.then(() => { build(); requestAnimationFrame(tick) })
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 150) })
+  c.addEventListener('pointermove', e => { const r = c.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top })
+  c.addEventListener('pointerleave', () => { mouse.x = mouse.y = -9999 })
+  let vis = true; new IntersectionObserver(e => vis = e[0].isIntersecting).observe(c)
+  const R = 110
+  function tick() {
+    requestAnimationFrame(tick)
+    if (!vis) return
+    x.clearRect(0, 0, W, H)
+    x.fillStyle = '#0f0f0f'
+    const acc = []
+    for (const p of pts) {
+      const dx = p.x - mouse.x, dy = p.y - mouse.y, dd = dx * dx + dy * dy
+      if (dd < R * R && !reduced) { const f = (1 - Math.sqrt(dd) / R) * 2.6, a = Math.atan2(dy, dx); p.vx += Math.cos(a) * f; p.vy += Math.sin(a) * f }
+      p.vx += (p.hx - p.x) * .045; p.vy += (p.hy - p.y) * .045
+      p.vx *= .82; p.vy *= .82
+      p.x += p.vx; p.y += p.vy
+      if (reduced) { p.x = p.hx; p.y = p.hy }
+      const sp = Math.abs(p.vx) + Math.abs(p.vy)
+      if (p.a || sp > 3) acc.push(p); else x.fillRect(p.x - p.r, p.y - p.r, p.r * 2, p.r * 2)
+    }
+    x.fillStyle = '#2b3df5'
+    for (const p of acc) x.fillRect(p.x - p.r, p.y - p.r, p.r * 2, p.r * 2)
+  }
+
+  const fl = document.getElementById('float'), imgs = fl.querySelectorAll('img')
+  let fx = 0, fy = 0, tx = 0, ty = 0
+  addEventListener('pointermove', e => { tx = e.clientX; ty = e.clientY })
+  ;(function follow() { fx += (tx - fx) * .14; fy += (ty - fy) * .14; fl.style.left = fx + 'px'; fl.style.top = fy + 'px'; requestAnimationFrame(follow) })()
+  document.querySelectorAll('.row').forEach(r => {
+    r.addEventListener('pointerenter', () => { const i = r.dataset.img; if (i === undefined) return; imgs.forEach((im, k) => im.classList.toggle('on', k == i)); fl.classList.add('on') })
+    r.addEventListener('pointerleave', () => fl.classList.remove('on'))
+  })
+})()
+</script>
+</body>
+</html>
