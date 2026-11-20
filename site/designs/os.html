@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Andy Seymour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --desk: #c9cdd3; --win: #ffffffee; --ink: #16181c; --grey: #6a6f7a; --line: #00000014; --blue: #2f6bff; --term: #101214; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { font: 400 14px/1.5 Inter, system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; overflow: hidden; user-select: none;
+    background: radial-gradient(1200px 800px at 75% 20%, #e8ebf0, transparent 60%), radial-gradient(900px 700px at 10% 90%, #aeb5c0, transparent 60%), var(--desk); }
+  body::before { content: ""; position: fixed; inset: 0; background-image: radial-gradient(#00000014 1px, transparent 1.2px); background-size: 18px 18px; pointer-events: none; }
+  a { color: var(--blue); text-decoration: none; } a:hover { text-decoration: underline; }
+  .menubar { position: fixed; inset: 0 0 auto; height: 30px; z-index: 1000; display: flex; align-items: center; gap: 18px; padding: 0 14px; background: #ffffffb3; backdrop-filter: blur(20px) saturate(1.6); border-bottom: 1px solid var(--line); font-size: 13px; }
+  .menubar b { font-weight: 700; } .menubar button { all: unset; cursor: default; padding: 2px 6px; border-radius: 4px; } .menubar button:hover { background: #0000000f; }
+  .menubar .right { margin-left: auto; display: flex; gap: 16px; font-variant-numeric: tabular-nums; }
+  .icons { position: fixed; top: 50px; right: 18px; display: grid; gap: 14px; z-index: 1; }
+  .icon { all: unset; width: 84px; display: grid; justify-items: center; gap: 6px; padding: 6px 4px; border-radius: 8px; cursor: default; text-align: center; font-size: 12px; font-weight: 500; }
+  .icon:hover, .icon:focus-visible { background: #ffffff55; } .icon .g { width: 52px; height: 52px; border-radius: 12px; display: grid; place-items: center; font: 600 13px Inter; color: #fff; box-shadow: 0 6px 16px -6px #0006, inset 0 1px 0 #ffffff55; }
+  .icon span:last-child { text-shadow: 0 1px 2px #fff8; }
+  .win { position: fixed; min-width: 280px; background: var(--win); backdrop-filter: blur(30px) saturate(1.4); border-radius: 12px; box-shadow: 0 30px 70px -20px #0005, 0 0 0 1px #0000001a; overflow: hidden; display: flex; flex-direction: column; animation: pop .28s cubic-bezier(.2, .9, .3, 1.2); }
+  @keyframes pop { from { transform: scale(.94); opacity: 0 } }
+  .win.closing { animation: close .18s ease-in forwards; } @keyframes close { to { transform: scale(.94); opacity: 0 } }
+  .tb { height: 38px; flex: none; display: flex; align-items: center; gap: 8px; padding: 0 12px; border-bottom: 1px solid var(--line); cursor: grab; font-size: 13px; font-weight: 600; }
+  .tb:active { cursor: grabbing; }
+  .tb .dots { display: flex; gap: 7px; margin-right: 8px; } .tb .dots i { width: 12px; height: 12px; border-radius: 50%; background: #d0d3d8; display: block; cursor: default; }
+  .win.focus .tb .dots i:nth-child(1) { background: #ff5f57; } .win.focus .tb .dots i:nth-child(2) { background: #febc2e; } .win.focus .tb .dots i:nth-child(3) { background: #28c840; }
+  .tb .t { flex: 1; text-align: center; margin-right: 50px; color: var(--grey); } .win.focus .tb .t { color: var(--ink); }
+  .body { overflow: auto; padding: 22px 24px; user-select: text; }
+  .about h1 { font-size: 30px; font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
+  .about .role { color: var(--grey); font-size: 15px; margin-top: 4px; }
+  .about p { margin-top: 14px; font-size: 15px; max-width: 46ch; }
+  .about .row { display: flex; gap: 8px; margin-top: 18px; flex-wrap: wrap; }
+  .pill { all: unset; cursor: pointer; font-size: 13px; font-weight: 500; padding: 7px 13px; border-radius: 8px; background: #0000000b; } .pill:hover { background: #00000016; text-decoration: none; }
+  .pill.pri { background: var(--ink); color: #fff; } .pill.pri:hover { background: #000; }
+  .avatar { width: 64px; height: 64px; border-radius: 50%; background: conic-gradient(from 200deg, #2f6bff, #7aa2ff, #2f6bff); display: grid; place-items: center; color: #fff; font: 700 22px Inter; margin-bottom: 14px; box-shadow: inset 0 0 0 3px #ffffff55; }
+  .exp { padding: 0; } .exp .side { display: grid; grid-template-columns: 170px 1fr; height: 100%; }
+  .exp nav { background: #00000006; border-right: 1px solid var(--line); padding: 10px; display: grid; align-content: start; gap: 2px; }
+  .exp nav button { all: unset; padding: 7px 10px; border-radius: 6px; font-size: 13px; cursor: default; } .exp nav button.on { background: var(--blue); color: #fff; }
+  .exp nav small { display: block; font-size: 11px; opacity: .7; }
+  .exp .pane { padding: 20px 22px; overflow: auto; user-select: text; } .exp h2 { font-size: 20px; letter-spacing: -.02em; } .exp .when { color: var(--grey); font-size: 13px; }
+  .exp .r { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); } .exp .r b { font-size: 14px; } .exp .r p { color: #3c4048; } .exp .tags { color: var(--grey); font: 12px "JetBrains Mono", monospace; }
+  .proj { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .proj a { color: inherit; } .proj a:hover { text-decoration: none; } .proj img { width: 100%; aspect-ratio: 16/10; object-fit: cover; object-position: top left; border-radius: 8px; box-shadow: 0 0 0 1px var(--line); transition: transform .3s; } .proj a:hover img { transform: translateY(-3px); }
+  .proj b { display: block; margin-top: 8px; font-size: 13px; } .proj span { color: var(--grey); font-size: 12px; }
+  .term { background: var(--term); color: #d8dde5; } .term .tb { background: #1a1d21; color: #9aa3ad; border-color: #ffffff12; } .win.focus.term .tb .t { color: #d8dde5; }
+  .term .body { font: 13px/1.6 "JetBrains Mono", monospace; padding: 14px 16px; white-space: pre-wrap; }
+  .term .p { color: #7ee2a8; } .term .c { color: #7aa2ff; } .term input { all: unset; font: inherit; color: #fff; width: 60%; caret-color: #7ee2a8; }
+  .dock { position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; gap: 8px; padding: 8px; border-radius: 18px; background: #ffffff66; backdrop-filter: blur(24px) saturate(1.6); box-shadow: 0 0 0 1px #ffffff55, 0 20px 40px -20px #0006; }
+  .dock button { all: unset; width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; color: #fff; font: 600 12px Inter; cursor: default; transition: transform .2s cubic-bezier(.2, .9, .3, 1.4); position: relative; box-shadow: inset 0 1px 0 #ffffff55; }
+  .dock button:hover { transform: translateY(-8px) scale(1.15); }
+  .dock button.open::after { content: ""; position: absolute; bottom: -6px; width: 4px; height: 4px; border-radius: 50%; background: #333; }
+  .dock button[title]:hover::before { content: attr(title); position: absolute; bottom: 62px; background: #222c; color: #fff; font-size: 12px; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+  @media (max-width: 760px) {
+    body { overflow: auto; } .icons { display: none; } .menubar .hide { display: none; }
+    .win { position: relative !important; left: auto !important; top: auto !important; width: auto !important; height: auto !important; margin: 12px; } #desk { padding: 34px 0 90px; }
+    .exp .side { grid-template-columns: 1fr; } .exp nav { display: flex; overflow: auto; } .proj { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header class="menubar"><b>Andy Seymour</b><button data-open="about" class="hide">About</button><button data-open="exp" class="hide">Experience</button><button data-open="proj" class="hide">Projects</button><button data-open="term" class="hide">Terminal</button><div class="right"><span class="hide">London</span><span id="clock"></span></div></header>
+<div class="icons">
+  <button class="icon" data-open="cv"><span class="g" style="background:#e5484d">PDF</span><span>CV.pdf</span></button>
+  <button class="icon" data-open="exp"><span class="g" style="background:#2f6bff">Exp</span><span>Experience</span></button>
+  <button class="icon" data-open="proj"><span class="g" style="background:#f59e0b">Prj</span><span>Projects</span></button>
+  <button class="icon" data-open="term"><span class="g" style="background:#1a1d21">&gt;_</span><span>Terminal</span></button>
+  <button class="icon" data-open="mail"><span class="g" style="background:#22a06b">@</span><span>Email</span></button>
+</div>
+<div id="desk"></div>
+<nav class="dock"><button style="background:#2f6bff" title="About" data-open="about">AS</button><button style="background:#5b5bd6" title="Experience" data-open="exp">Exp</button><button style="background:#f59e0b" title="Projects" data-open="proj">Prj</button><button style="background:#1a1d21" title="Terminal" data-open="term">&gt;_</button><button style="background:#22a06b" title="Email" data-open="mail">@</button><button style="background:#0a66c2" title="LinkedIn" data-open="li">in</button></nav>
+<script src="content.js"></script>
+<script>
+const C = CV, desk = document.getElementById('desk'), wins = {}
+let z = 10
+const mobile = () => innerWidth < 760
+const apps = {
+  about: { title: 'About', w: 440, h: 0, x: .04, y: .08, body: () => h('div', { class: 'body about' },
+    h('div', { class: 'avatar' }, 'AS'), h('h1', {}, C.name), h('p', { class: 'role' }, `${C.title}, ${C.location}`),
+    h('p', {}, 'I write trading strategies in C++ and Python at Gambit Research, where I joined to lead the data team and moved through internal tools. Before that, four years at IBM and flight software at BAE Systems.'),
+    h('div', { class: 'row' }, h('a', { class: 'pill pri', href: 'mailto:' + C.email }, 'Email me'), h('button', { class: 'pill', onclick: () => open('exp') }, 'Experience'), h('button', { class: 'pill', onclick: () => print() }, 'CV'), h('a', { class: 'pill', href: C.links[0].url }, 'LinkedIn'))) },
+  exp: { title: 'Experience', w: 620, h: 420, x: .37, y: .07, body: () => {
+    const pane = h('div', { class: 'pane' }), btns = []
+    const show = i => { btns.forEach((b, k) => b.classList.toggle('on', k === i)); const j = C.jobs[i]; pane.replaceChildren(...[h('h2', {}, j.company), h('p', { class: 'when' }, `${years(j)}, ${j.place}`), j.roles.map(r => h('div', { class: 'r' }, h('b', {}, r.title), r.tags.length ? h('div', { class: 'tags' }, r.tags.join('  ')) : null, h('p', {}, r.text)))].flat()) }
+    const nav = h('nav', {}, C.jobs.map((j, i) => { const b = h('button', { onclick: () => show(i) }, j.company, h('small', {}, years(j))); btns.push(b); return b }))
+    show(0); return h('div', { class: 'body exp' }, h('div', { class: 'side' }, nav, pane)) } },
+  proj: { title: 'Projects', w: 600, h: 0, x: .04, y: .54, body: () => h('div', { class: 'body' }, h('div', { class: 'proj' }, C.projects.map(p => h('a', { href: p.url, target: '_blank' }, h('img', { src: p.img, alt: '' }), h('b', {}, p.name), h('span', {}, p.host))))) },
+  term: { title: 'andy@london: ~', cls: 'term', w: 480, h: 280, x: .5, y: .58, body: () => terminal() },
+}
+function open(id) {
+  if (id === 'cv') return print()
+  if (id === 'mail') return location.href = 'mailto:' + C.email
+  if (id === 'li') return window.open(C.links[0].url)
+  if (wins[id]) return focus(wins[id])
+  const a = apps[id], W = innerWidth, H = innerHeight
+  const el = h('section', { class: 'win ' + (a.cls || ''), role: 'dialog', 'aria-label': a.title },
+    h('div', { class: 'tb' }, h('div', { class: 'dots' }, h('i', { onclick: () => close(id), title: 'Close' }), h('i'), h('i')), h('div', { class: 't' }, a.title)), a.body())
+  if (!mobile()) Object.assign(el.style, { left: Math.min(W - a.w - 20, W * a.x) + 'px', top: Math.max(44, H * a.y) + 'px', width: a.w + 'px', ...(a.h ? { height: a.h + 'px' } : {}) })
+  el.addEventListener('pointerdown', () => focus(el))
+  drag(el, el.querySelector('.tb'))
+  desk.append(el); wins[id] = el; focus(el); dockState()
+  if (id === 'term') setTimeout(() => el.querySelector('input')?.focus({ preventScroll: true }), 50)
+}
+function close(id) { const el = wins[id]; el.classList.add('closing'); setTimeout(() => el.remove(), 180); delete wins[id]; dockState() }
+function focus(el) { Object.values(wins).forEach(w => w.classList.remove('focus')); el.classList.add('focus'); el.style.zIndex = ++z }
+function dockState() { document.querySelectorAll('.dock button').forEach(b => b.classList.toggle('open', !!wins[b.dataset.open])) }
+function drag(el, handle) {
+  handle.addEventListener('pointerdown', e => {
+    if (mobile() || e.target.tagName === 'I') return
+    const sx = e.clientX, sy = e.clientY, ox = el.offsetLeft, oy = el.offsetTop
+    const mv = ev => { el.style.left = Math.max(-el.offsetWidth + 80, Math.min(innerWidth - 80, ox + ev.clientX - sx)) + 'px'; el.style.top = Math.max(30, Math.min(innerHeight - 40, oy + ev.clientY - sy)) + 'px' }
+    const up = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up) }
+    addEventListener('pointermove', mv); addEventListener('pointerup', up)
+  })
+}
+function terminal() {
+  const out = h('div'), input = h('input', { 'aria-label': 'Terminal command', spellcheck: 'false', autocomplete: 'off' })
+  const body = h('div', { class: 'body' }, out, h('div', {}, h('span', { class: 'p' }, '$ '), input))
+  const say = (...k) => { out.append(h('div', {}, ...k)); body.scrollTop = 1e9 }
+  const cmds = {
+    help: () => say('Commands: ', h('span', { class: 'c' }, 'whoami  experience  projects  skills  contact  cv  clear')),
+    whoami: () => say(`${C.name}. ${C.title} in ${C.location}. Trading strategies in C++ and Python at Gambit Research.`),
+    experience: () => C.jobs.forEach(j => say(h('span', { class: 'c' }, `${years(j).padEnd(12)}`), `${j.company}: ${j.roles.map(r => r.title).join(', ')}`)),
+    projects: () => C.projects.forEach(p => say(h('span', { class: 'c' }, p.name.padEnd(15)), h('a', { href: p.url, target: '_blank', style: 'color:#d8dde5' }, p.host))),
+    skills: () => C.skills.forEach(s => say(h('span', { class: 'c' }, s.group.padEnd(15)), s.items)),
+    contact: () => say('Email ', h('a', { href: 'mailto:' + C.email, style: 'color:#7ee2a8' }, C.email)),
+    cv: () => { say('Opening the print dialog'); print() },
+    clear: () => out.replaceChildren(),
+    sudo: () => say('Nice try.'),
+  }
+  say('Last login: ' + new Date().toDateString() + ' on ttys001')
+  say('Type ', h('span', { class: 'c' }, 'help'), ' to see what I can tell you.')
+  input.addEventListener('keydown', e => { if (e.key !== 'Enter') return; const v = input.value.trim(); input.value = ''; say(h('span', { class: 'p' }, '$ '), v); if (!v) return; (cmds[v.toLowerCase()] || (() => say(`command not found: ${v}. Try help.`)))() })
+  body.addEventListener('click', () => input.focus())
+  return body
+}
+document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => open(b.dataset.open)))
+const clock = document.getElementById('clock')
+const tick = () => clock.textContent = new Date().toLocaleString('en-GB', { timeZone: 'Europe/London', weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+tick(); setInterval(tick, 10000)
+;['exp', 'proj', 'term', 'about'].forEach((id, i) => setTimeout(() => open(id), 150 + i * 160))
+</script>
+</body>
+</html>
