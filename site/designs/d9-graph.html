@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Career graph · Andy Seymour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Fragment+Mono&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#fafaf8; --fg:#141413; --fg2:#55554f; --mute:#93928b; --line:#e5e4de; --c0:#e4572e; --c1:#2e6ae4; --c2:#1a9e74; --c3:#8a5cf6; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--fg); font: 400 16px/1.6 "Schibsted Grotesk", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  .mono { font-family: "Fragment Mono", ui-monospace, monospace; font-size: 12px; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px); }
+  .nav { display: flex; justify-content: space-between; padding: 20px 0; font-size: 14px; color: var(--fg2); } .nav b { color: var(--fg); } .nav nav { display: flex; gap: 22px; }
+  .hero { padding: clamp(48px, 9vw, 110px) 0 24px; }
+  .hero h1 { font-size: clamp(44px, 7.4vw, 104px); font-weight: 800; letter-spacing: -.05em; line-height: .95; }
+  .hero p { font-size: clamp(18px, 1.7vw, 22px); color: var(--fg2); margin-top: 18px; max-width: 34em; }
+  .graph { margin: 40px 0 12px; position: relative; }
+  .graph svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .graph .lane { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .graph .node { stroke: var(--bg); stroke-width: 3; cursor: pointer; transition: r .2s; }
+  .graph .node:hover, .graph .node.on { r: 9; }
+  .graph text { font: 12px "Fragment Mono", monospace; fill: var(--fg2); }
+  .graph text.co { font: 600 14px "Schibsted Grotesk", sans-serif; fill: var(--fg); }
+  .graph .yr { fill: var(--mute); font-size: 11px; }
+  .graph .grid { stroke: var(--line); stroke-dasharray: 2 4; }
+  .tip { min-height: 74px; border-left: 3px solid var(--fg); padding: 6px 0 6px 16px; transition: border-color .3s; }
+  .tip b { font-weight: 600; } .tip p { color: var(--fg2); max-width: 64ch; font-size: 15px; }
+  .hint { color: var(--mute); margin-top: 6px; }
+  section { padding-top: clamp(56px, 8vw, 100px); }
+  h2 { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding-bottom: 12px; border-bottom: 2px solid var(--fg); margin-bottom: 8px; }
+  .job { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 6px 36px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+  .job h3 { font-size: 20px; font-weight: 700; letter-spacing: -.02em; display: flex; gap: 10px; align-items: center; }
+  .job h3 i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .role + .role { margin-top: 16px; } .role b { font-weight: 600; } .role .t { color: var(--mute); } .role p { color: var(--fg2); }
+  .sk { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 32px; } .sk div { padding: 14px 0; border-bottom: 1px solid var(--line); } .sk b { display: block; color: var(--mute); font-weight: 500; font-size: 13px; }
+  .pj { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; padding-top: 16px; }
+  .pj img { width: 100%; aspect-ratio: 16/10; object-fit: cover; object-position: top left; border-radius: 8px; border: 1px solid var(--line); display: block; margin-bottom: 10px; transition: transform .3s; }
+  .pj a:hover img { transform: translateY(-4px); } .pj b { font-weight: 700; } .pj p { color: var(--fg2); font-size: 15px; }
+  .contact { padding: clamp(80px, 12vw, 150px) 0 40px; }
+  .contact a.mail { font-size: clamp(28px, 5.4vw, 72px); font-weight: 800; letter-spacing: -.045em; overflow-wrap: anywhere; } .contact a.mail:hover { color: var(--c0); }
+  .contact ul { list-style: none; display: flex; gap: 22px; margin-top: 18px; color: var(--fg2); }
+  @media (max-width: 760px) { .job { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script src="content.js"></script>
+<script>
+const C = CV, app = document.getElementById('app')
+const colors = ['var(--c0)', 'var(--c1)', 'var(--c2)', 'var(--c3)']
+const tip = h('div', { class: 'tip' })
+const graphBox = h('div', { class: 'graph', 'aria-hidden': 'true' })
+app.append(
+  h('header', { class: 'nav' }, h('b', {}, C.name), h('nav', {}, h('a', { href: '#experience' }, 'Experience'), h('a', { href: '#contact' }, 'Contact'))),
+  h('div', { class: 'hero' }, h('h1', {}, C.name), h('p', {}, C.summary)),
+  graphBox, tip, h('p', { class: 'hint mono' }, 'Hover or tap a point on the graph'),
+  h('section', { id: 'experience' }, h('h2', {}, 'Experience'), C.jobs.map((j, ji) => h('article', { class: 'job' },
+    h('div', {}, h('h3', {}, h('i', { style: `background:${colors[ji]}` }), j.company), h('p', { class: 'mono', style: 'color:var(--mute)' }, `${years(j)} · ${j.place}`)),
+    h('div', {}, j.roles.map(r => h('div', { class: 'role' }, h('b', {}, r.title), r.tags.length ? h('span', { class: 't mono' }, '  ' + r.tags.join(' · ')) : null, h('p', {}, r.text))))))),
+  h('section', {}, h('h2', {}, 'Skills'), h('div', { class: 'sk' }, C.skills.map(s => h('div', {}, h('b', {}, s.group), s.items)))),
+  h('section', {}, h('h2', {}, 'Side projects'), h('div', { class: 'pj' }, C.projects.map(p => h('a', { href: p.url, target: '_blank' }, h('img', { src: p.img, alt: '', loading: 'lazy' }), h('b', {}, p.name + ' ↗'), h('p', {}, p.text))))),
+  h('section', {}, h('h2', {}, 'Education'), h('p', { style: 'padding:14px 0' }, `${C.education.degree} · ${C.education.school} · ${C.education.note}`)),
+  h('footer', { class: 'contact', id: 'contact' }, h('a', { class: 'mail', href: 'mailto:' + C.email }, C.email), h('ul', {}, C.links.map(l => h('li', {}, h('a', { href: l.url }, l.label))))))
+
+// ---- career as a branch graph ----
+const NS = 'http://www.w3.org/2000/svg'
+const s = (tag, a, p) => { const n = document.createElementNS(NS, tag); for (const k in a) n.setAttribute(k, a[k]); p && p.appendChild(n); return n }
+const W = 1000, H = 230, X0 = 20, X1 = 980, Y0 = 2010, Y1 = 2027
+const x = y => X0 + (y - Y0) / (Y1 - Y0) * (X1 - X0)
+const svg = s('svg', { viewBox: `0 0 ${W} ${H}` }, graphBox)
+for (let y = 2010; y <= 2026; y += 2) { s('line', { x1: x(y), x2: x(y), y1: 10, y2: H - 26, class: 'grid' }, svg); const t = s('text', { x: x(y), y: H - 6, 'text-anchor': 'middle', class: 'yr' }, svg); t.textContent = y }
+const trunkY = 190
+// education trunk start
+const edu = { label: C.education.degree, text: `${C.education.school}. ${C.education.note}.`, color: 'var(--fg)' }
+s('path', { d: `M${x(2010)},${trunkY} L${x(2026.6)},${trunkY}`, class: 'lane', stroke: 'var(--line)' }, svg)
+const lanes = [...C.jobs].reverse() // BAE, IBM, Gambit
+const laneY = [150, 110, 60]
+const nodes = []
+const add = (cx, cy, color, info) => { const c = s('circle', { cx, cy, r: 6, fill: color, class: 'node' }, svg); nodes.push({ c, info, color }); return c }
+add(x(2010.2), trunkY, 'var(--fg)', edu)
+const tl = s('text', { x: x(2010.2) + 12, y: trunkY + 22 }, svg); tl.textContent = 'Leicester'
+lanes.forEach((j, i) => {
+  const ji = C.jobs.indexOf(j), col = colors[ji], y = laneY[i]
+  const from = x(j.from), to = x(j.to ?? 2026.6)
+  const p = s('path', { d: `M${from - 30},${trunkY} C${from - 8},${trunkY} ${from - 18},${y} ${from + 6},${y} L${to},${y}` + (j.to ? ` C${to + 20},${y} ${to + 6},${laneY[i + 1] ?? y} ${to + 26},${laneY[i + 1] ?? y}` : ''), class: 'lane', stroke: col }, svg)
+  const len = p.getTotalLength(); p.style.strokeDasharray = len; p.style.strokeDashoffset = len
+  p.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 900, delay: 200 + i * 450, fill: 'forwards', easing: 'cubic-bezier(.5,0,.2,1)' })
+  const lbl = s('text', { x: from + 8, y: i === 0 ? y + 24 : y - 14, class: 'co' }, svg); lbl.textContent = j.company
+  const roles = [...j.roles].reverse(), span = (j.to ?? 2026.4) - j.from
+  roles.forEach((r, k) => {
+    const cx = x(j.from + span * (k + .5) / roles.length)
+    const c = add(cx, y, col, { label: `${r.title} · ${j.company}`, text: r.text, color: col })
+    c.style.opacity = 0; c.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, delay: 700 + i * 450 + k * 120, fill: 'forwards' })
+  })
+})
+const show = n => { nodes.forEach(m => m.c.classList.toggle('on', m === n)); tip.style.borderColor = n.color; tip.replaceChildren(h('b', {}, n.info.label), h('p', {}, n.info.text)) }
+nodes.forEach(n => { n.c.addEventListener('pointerenter', () => show(n)); n.c.addEventListener('click', () => show(n)) })
+show(nodes[nodes.length - 1])
+</script>
+</body>
+</html>
