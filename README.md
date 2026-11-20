@@ -1,24 +1,7 @@
-# AndySeymour2904.github.io
+# andyseymour.dev
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Personal site and CV, written as a short maths paper. Plain HTML, CSS and JS in `site/`, with no build step.
 
-## Deployment
-
-1. Merge to dev
-2. GitHub workflow deploys automatically to https://andyseymour2904.github.io/ with gh-pages plugin
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
+- **Preview:** `python3 -m http.server -d site 8080`
+- **Deploy:** push to `dev`. The workflow publishes `site/` to the `master` branch, which GitHub Pages serves at andyseymour.dev (`site/CNAME`).
+- **Print as CV:** the print stylesheet turns the page into an A4 CV (the "Print as CV" button, or Ctrl+P → Save as PDF).

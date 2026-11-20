@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Andy Seymour — Software &amp; Data Engineer</title>
+<meta name="description" content="Andy Seymour: software and data engineer in London. First-class MSc Mathematics; BAE Systems, IBM, Gambit Research; builder of FPL Outlook, TOPIK Trainer and whatslive.">
+<meta property="og:title" content="On the Hiring of Andy Seymour">
+<meta property="og:description" content="A short paper. Software & data engineer, London.">
+<meta property="og:url" content="https://andyseymour.dev/">
+<meta name="theme-color" content="#f3efe4">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;600&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script>
+  try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t } catch (e) {}
+</script>
+</head>
+<body>
+
+<div class="pdfbar" aria-hidden="false">
+  <span class="mono">andyseymour.dev / preprint v2026.11</span>
+  <span class="pdfbar-right">
+    <span class="mono pageno" id="pageno">p. 1</span>
+    <button class="chip" id="theme" type="button" aria-label="Toggle paper or chalkboard theme">chalkboard</button>
+    <button class="chip chip-ink" id="print" type="button">Print as CV</button>
+  </span>
+</div>
+
+<nav class="toc" aria-label="Contents">
+  <p class="mono toc-h">Contents</p>
+  <ol>
+    <li><a href="#abstract">Abstract</a></li>
+    <li><a href="#intro"><span>1</span> Introduction</a></li>
+    <li><a href="#works"><span>2</span> Selected works</a></li>
+    <li><a href="#experience"><span>3</span> Experience</a></li>
+    <li><a href="#education"><span>4</span> Education</a></li>
+    <li><a href="#toolkit"><span>5</span> Toolkit</a></li>
+    <li><a href="#outside"><span>6</span> Outside work</a></li>
+    <li><a href="#refs">References</a></li>
+  </ol>
+</nav>
+
+<main class="paper">
+
+<header class="titleblock">
+  <p class="mono arxiv">[cs.SE] [stat.AP] &nbsp;·&nbsp; London, <time datetime="2026-11">November 2026</time></p>
+  <h1>On the Hiring of <em>Andy&nbsp;Seymour</em></h1>
+  <p class="authors">Andy Seymour<sup>1</sup></p>
+  <p class="affil"><sup>1</sup>Software &amp; data engineer, London, UK &nbsp;·&nbsp; <a href="mailto:aseymour917@gmail.com">aseymour917@gmail.com</a></p>
+
+  <figure class="fig fig-hero" aria-labelledby="fig1cap">
+    <svg id="trajectory" viewBox="0 0 640 230" role="img" aria-label="A curve rising from 2010 to 2026 with marked points for Leicester, BAE Systems, IBM, Gambit Research and independent products"></svg>
+    <figcaption id="fig1cap"><b>Figure 1.</b> Things built, <i>b</i>(<i>t</i>), against time. Points mark changes of employer. Not to scale; the curve is monotone, which is the point.</figcaption>
+  </figure>
+</header>
+
+<section id="abstract" class="abstract">
+  <h2 class="abstract-h">Abstract</h2>
+  <p>We present <b>Andy Seymour</b>, a software and data engineer with a first-class MSc in Mathematics and more than ten years of production experience: flight software at BAE Systems, cloud integration UIs at IBM, and data platforms for quantitative sports analysts at Gambit Research. Outside work he builds and runs complete products end to end. Each scrapes messy real-world data, models it and ships it to real users. We show that he can take a problem from raw feed to finished interface without anyone holding the other end of the rope. The proof is constructive.</p>
+  <p class="keywords"><b>Keywords:</b> data engineering · React · Python · Spark · Cloudflare · sports data · product</p>
+</section>
+
+<div class="theorem">
+  <p><span class="thm-h">Theorem 1</span> <span class="thm-n">(Main result)</span><span class="thm-sep">.</span> <i>Let P be a problem involving data that is unreliable, late or spread across five sources, and that has to end up in front of people. Then Andy will build the scraper, the model, the API and the interface for P, and keep them running.</i></p>
+  <p class="proof"><i>Proof.</i> By construction. See §2 for four independent instances and §3 for the professional history that makes them unsurprising. <button class="qed" id="qed" type="button" title="Q.E.D." aria-label="Q.E.D. Jump to contact">∎</button></p>
+</div>
+
+<section id="intro">
+  <h2><span class="secno">1</span>Introduction</h2>
+  <p>I started in maths, and I have been building software for a living since 2014. I've written avionics code in Ada for the Typhoon and F‑35, shipped React UIs for IBM's cloud integration products, and led a data team that makes a very large HDFS estate something analysts can actually query.</p>
+  <p>The thread running through all of it is that I like owning the whole pipe. The work I'm proudest of starts with an ugly data source and ends with an interface someone opens every week. Getting there takes ETL, a model that holds up when you test it, careful UI work, and the dull operational bits: retries, alerts, staging environments, tests. I spend time on those too.<span class="mn" role="note">Currently based in London. Open to conversations about senior engineering, data and full-stack roles.</span></p>
+</section>
+
+<section id="works">
+  <h2><span class="secno">2</span>Selected works</h2>
+  <p>Four products I designed, built and operate on my own. Each one is live or reproducible, and each is a complete system rather than a demo.</p>
+
+  <article class="work">
+    <figure class="fig fig-work"><svg class="mini" data-fig="fpl" viewBox="0 0 220 120" aria-hidden="true"></svg></figure>
+    <div>
+      <h3><span class="subno">2.1</span><a href="https://fploutlook.com">FPL Outlook</a> <span class="mono url">fploutlook.com</span></h3>
+      <p>A Fantasy Premier League planner. It shows predicted line-ups and team news, each fixture's xG and clean-sheet probability, expected points and sell prices, plus the cup and European ties worth waiting for before a transfer. A Python pipeline joins the FPL API, RotoWire, FotMob and bookmaker prices. A scheduled GitHub Action refreshes the data and emails an alert on failure. A Cloudflare Worker proxies FPL and handles sign-in.</p>
+      <p class="stack">Python · Next.js · Cloudflare Workers · GitHub Actions · probabilistic modelling</p>
+    </div>
+  </article>
+
+  <article class="work">
+    <figure class="fig fig-work"><svg class="mini" data-fig="whatslive" viewBox="0 0 220 120" aria-hidden="true"></svg></figure>
+    <div>
+      <h3><span class="subno">2.2</span>whatslive <span class="mono url">whatslive.guide</span></h3>
+      <p>A calendar of UK live sport on TV. Broadcaster listings stop about three weeks out, so whatslive fills the rest in from full season schedules for fourteen football competitions, F1 and MotoGP, marks those fixtures <i>TV TBC</i>, and swaps in the real listing once a channel picks one up. It takes real end times from Sky's EPG (91% coverage of linear events in the next week), and venues and club rosters from other sources. Accounts let you follow teams.</p>
+      <p class="stack">Next.js static export · Cloudflare Workers + D1 · scraping · data reconciliation</p>
+    </div>
+  </article>
+
+  <article class="work">
+    <figure class="fig fig-work"><svg class="mini" data-fig="topik" viewBox="0 0 220 120" aria-hidden="true"></svg></figure>
+    <div>
+      <h3><span class="subno">2.3</span><a href="https://topiktrainer.com">TOPIK Trainer</a> <span class="mono url">topiktrainer.com</span></h3>
+      <p>A revision site for the reading section of the TOPIK I Korean exam, built on 12 released papers (480 questions). Guests' progress stays in the browser. Signing in with Google syncs it to a D1 database, and each question has a "report a problem" flow protected by Turnstile. The corpus has its own validators, and the app is covered by typechecking, unit tests and Playwright end-to-end tests.</p>
+      <p class="stack">Preact · TypeScript · Vite · Cloudflare Workers + D1 · Playwright</p>
+    </div>
+  </article>
+
+  <article class="work">
+    <figure class="fig fig-work"><svg class="mini" data-fig="odds" viewBox="0 0 220 120" aria-hidden="true"></svg></figure>
+    <div>
+      <h3><span class="subno">2.4</span>Pre-match odds movement</h3>
+      <p>A research pipeline that takes Betfair Exchange historical data for Premier League match-odds markets and studies how home, draw and away prices move in the 24 hours before kick-off: when moves start, how far they go, and whether they persist or reverse. Signals are tuned on the earliest 60% of matches and tested on the held-out rest, with match-level bootstrap intervals, because signals within one match aren't independent.<span class="mn" role="note">The honest caveat is in the README. Last-traded-price movement is not an achievable trading profit.</span></p>
+      <p class="stack">Python · pandas · Streamlit · bootstrap inference · out-of-sample validation</p>
+    </div>
+  </article>
+</section>
+
+<section id="experience">
+  <h2><span class="secno">3</span>Experience</h2>
+
+  <div class="job">
+    <h3><span class="subno">3.1</span>Data Team Lead <span class="at">— Gambit Research</span></h3>
+    <p class="mn mn-dates" role="note"><b>2019 – present</b><br>London<br><span class="tags">Spark · Hadoop · Python · React · AWS</span></p>
+    <p>I lead the data team at a quantitative sports betting firm. I own the ETL pipelines and bring new data sources onto the platform. I guide technical and non-technical staff on querying very large datasets in HDFS, and I build and maintain bespoke web interfaces for analysts.</p>
+  </div>
+
+  <div class="job">
+    <h3><span class="subno">3.2</span>Full Stack / Frontend Developer <span class="at">— IBM</span></h3>
+    <p class="mn mn-dates" role="note"><b>2016 – 2019</b><br>Hursley<br><span class="tags">React · Redux · Angular · Node</span></p>
+    <p>On Cloud Integration Platform I moved between squads on tight deadlines, overhauling UIs and UX as the products moved from on-premise to SaaS and PaaS, and I pushed for pair programming and a cleaner front-end architecture. Before that, on App Connect, I worked full stack across several microservices. I introduced UI testing to the department, and I delivered complex features in an award-winning UI working closely with the design team.</p>
+  </div>
+
+  <div class="job">
+    <h3><span class="subno">3.3</span>Software Developer, MQ <span class="at">— IBM</span></h3>
+    <p class="mn mn-dates" role="note"><b>2015 – 2016</b><br>Hursley<br><span class="tags">C · Angular</span></p>
+    <p>I built features in a large multi-platform C codebase, integrated third-party open-source libraries into it, and was part of an innovation initiative to improve engineering processes.</p>
+  </div>
+
+  <div class="job">
+    <h3><span class="subno">3.4</span>Software Engineer <span class="at">— BAE Systems</span></h3>
+    <p class="mn mn-dates" role="note"><b>2014 – 2015</b><br>Warton &amp; Samlesbury<br><span class="tags">Ada · C++</span></p>
+    <p>I worked on display systems and controls for the Eurofighter Typhoon, and on the vehicle health and management system for the F‑35. The work meant implementing to an exact brief, with extensive planning before any code and rigorous testing after it. It's where I learned that "done" means verified.</p>
+  </div>
+</section>
+
+<section id="education">
+  <h2><span class="secno">4</span>Education</h2>
+  <p><b>Mathematics (MSc), First Class</b> — University of Leicester, 2010 – 2014. Four module prizes. Table 1 lists selected marks.</p>
+  <table class="tbl">
+    <caption><b>Table 1.</b> Selected module results. † marks a module prize.</caption>
+    <thead><tr><th scope="col">Module</th><th scope="col" class="num">Mark</th><th scope="col" aria-label="Bar"></th></tr></thead>
+    <tbody>
+      <tr><td>Fundamental Mathematics †</td><td class="num">95</td><td><span class="bar" style="--v:95"></span></td></tr>
+      <tr><td>Linear Algebra †</td><td class="num">95</td><td><span class="bar" style="--v:95"></span></td></tr>
+      <tr><td>Vector Calculus &amp; Applications</td><td class="num">94</td><td><span class="bar" style="--v:94"></span></td></tr>
+      <tr><td>Linear Statistical Models</td><td class="num">93</td><td><span class="bar" style="--v:93"></span></td></tr>
+      <tr><td>Computing †</td><td class="num">90</td><td><span class="bar" style="--v:90"></span></td></tr>
+      <tr><td>Scientific Computing</td><td class="num">89</td><td><span class="bar" style="--v:89"></span></td></tr>
+      <tr><td>Geometry &amp; Imagination †</td><td class="num">85</td><td><span class="bar" style="--v:85"></span></td></tr>
+      <tr><td>Data Mining &amp; Neural Networks</td><td class="num">85</td><td><span class="bar" style="--v:85"></span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="toolkit">
+  <h2><span class="secno">5</span>Toolkit</h2>
+  <p>Grouped by where it sits in the pipe. Bold items are things I'd happily be paged about at 3 a.m.</p>
+  <dl class="toolkit">
+    <div><dt>Ingest &amp; process</dt><dd><b>Python</b> · <b>Spark</b> · Hadoop / HDFS / YARN · Kafka · pandas · scraping at scale · Bash</dd></div>
+    <div><dt>Model</dt><dd>Statistics &amp; probability · regression · bootstrap &amp; out-of-sample validation · Jupyter · Streamlit</dd></div>
+    <div><dt>Serve</dt><dd><b>Node</b> · <b>Cloudflare Workers / D1</b> · Flask · Express · AWS · Docker · Kubernetes</dd></div>
+    <div><dt>Interface</dt><dd><b>React</b> · <b>TypeScript</b> · Next.js · Preact · Redux · CSS · UI/UX design</dd></div>
+    <div><dt>Keep it alive</dt><dd>GitHub Actions · Jenkins · Playwright · Cypress · Jest · TDD · staging environments · alerting</dd></div>
+    <div><dt>Past lives</dt><dd>Ada · C · C++ · Angular · Perl</dd></div>
+  </dl>
+</section>
+
+<section id="outside">
+  <h2><span class="secno">6</span>Outside work</h2>
+  <p>Rugby, climbing and cycling. I rode the <b>North Coast 500</b>, the loop around the far north of Scotland, by bicycle (Figure 2). I'm also learning Korean, which is how §2.3 started: I wanted a better revision tool than the ones that existed.</p>
+  <figure class="fig fig-nc500" aria-labelledby="fig2cap">
+    <svg id="nc500" viewBox="0 0 320 220" role="img" aria-label="Schematic outline of the North Coast 500 loop from Inverness"></svg>
+    <figcaption id="fig2cap"><b>Figure 2.</b> The NC500, schematic. ≈516 mi, starting and ending in Inverness. Hover or tap to trace it.</figcaption>
+  </figure>
+</section>
+
+<section id="refs" class="refs">
+  <h2>References</h2>
+  <ol>
+    <li><span class="ref-k">[1]</span> <span>Seymour, A. <i>Correspondence.</i> <a href="mailto:aseymour917@gmail.com">aseymour917@gmail.com</a>. The fastest way to reach me.</span></li>
+    <li><span class="ref-k">[2]</span> <span>Seymour, A. <i>Source code.</i> GitHub, <a href="https://github.com/AndySeymour2904">github.com/AndySeymour2904</a>.</span></li>
+    <li><span class="ref-k">[3]</span> <span>Seymour, A. <i>Professional profile.</i> LinkedIn, <a href="https://www.linkedin.com/in/andy-seymour-86a24ab1/">linkedin.com/in/andy-seymour</a>.</span></li>
+    <li><span class="ref-k">[4]</span> <span>Seymour, A. <i>Answers.</i> Stack Overflow, <a href="https://stackoverflow.com/users/1911439/andrew-seymour">stackoverflow.com/users/1911439</a>.</span></li>
+  </ol>
+</section>
+
+<footer class="colophon">
+  <p>Typeset in Newsreader, Instrument Serif and JetBrains Mono. Hand-written HTML, no framework. Printing this page gives a two-page CV. <span class="mono">© 2026</span></p>
+</footer>
+
+</main>
+
+<script src="script.js" defer></script>
+</body>
+</html>
