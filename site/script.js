@@ -14,8 +14,8 @@ window.CV = {
   ],
   jobs: [
     { company: 'Gambit Research', place: 'London', from: 2019, to: null, roles: [
-      { title: 'Strategy Development', tags: ['C++', 'Python'], text: 'Coding the trading strategies in C++ and Python.' },
-      { title: 'Tools', tags: [], text: 'Internal software for the trading and research teams.' },
+      { title: 'Strategy Developer', tags: ['C++', 'Python'], text: 'Developing trading strategies in C++ and Python. I still cover data and tools work when it is needed.' },
+      { title: 'Tools Team Lead', tags: [], text: 'Led the tools team, building internal software for the trading and research teams.' },
       { title: 'Data Team Lead', tags: ['Spark', 'Hadoop', 'Python', 'React', 'AWS'], text: 'Led the data team. Owned the ETL pipelines and brought new data sources onto the platform. Built web tools for analysts and helped technical and non-technical staff work with large datasets in HDFS.' },
     ] },
     { company: 'IBM', place: 'Hursley', from: 2015, to: 2019, roles: [
