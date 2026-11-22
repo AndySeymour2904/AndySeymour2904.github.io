@@ -31,8 +31,10 @@
   .who p { color: var(--mute); font-size: 17px; }
 
   /* the shell: no window, just lines of text */
-  .shell { margin-top: 38px; font: 15.5px/1.75 "Geist Mono", ui-monospace, monospace; max-width: 78ch; cursor: text; }
+  .shell { margin-top: 22px; font: 15.5px/1.75 "Geist Mono", ui-monospace, monospace; max-width: 78ch; cursor: text; }
   .shell .ln { white-space: pre-wrap; overflow-wrap: anywhere; }
+  #log { max-height: min(34vh, 290px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line) transparent; padding-right: 10px; -webkit-mask-image: linear-gradient(transparent, #000 28px); mask-image: linear-gradient(transparent, #000 28px); padding-top: 28px; }
+  #log::-webkit-scrollbar { width: 6px; } #log::-webkit-scrollbar-thumb { background: var(--line); border-radius: 6px; }
   .shell .ps { color: var(--accent); user-select: none; } .shell .ps i { font-style: normal; color: var(--faint); }
   .shell .out { color: var(--mute); } .shell .out b { color: var(--fg); font-weight: 500; } .shell .err { color: #f2a7a7; } :root.light .shell .err { color: #b42318; }
   .shell .grid { display: grid; grid-template-columns: max-content 1fr; gap: 0 22px; }
@@ -116,37 +118,20 @@ $('#links').append(...C.links.map(l => h('a', { href: l.url }, l.label)))
 
 /* ---------- the shell ---------- */
 const log = $('#log'), input = $('#cmd'), hint = $('#hint'), shell = $('#shell')
-const SECTIONS = ['about', 'experience', 'projects', 'skills', 'education', 'contact']
 const jump = id => `<span class="jump" data-jump="${id}">open the ${id} section</span>`
-const print = (html, cls = 'out') => { log.insertAdjacentHTML('beforeend', `<div class="ln ${cls}">${html}</div>`) }
+const print = (html, cls = 'out') => { log.insertAdjacentHTML('beforeend', `<div class="ln ${cls}">${html}</div>`); log.scrollTop = log.scrollHeight }
 const go = id => { const el = document.getElementById(id); if (el) el.scrollIntoView({ block: 'start' }) }
 const open = url => window.open(url, '_blank', 'noopener')
 
 const COMMANDS = {
-  help: { d: 'list commands', run: () => print('<div class="grid">' + Object.entries(COMMANDS).filter(([, c]) => !c.hidden).map(([k, c]) => `<span>${k}</span><span>${c.d}</span>`).join('') + '</div>Tab completes, arrow keys go through history.') },
-  whoami: { d: 'who I am', run: () => print(`<b>Andy Seymour</b>, software engineer in London. I write trading strategies in C++ and Python at Gambit Research.`) },
-  about: { d: 'a short summary', run: () => print(`Gambit Research since 2019: data team lead, then internal tools, now strategy development. Before that IBM and BAE Systems. MSc Mathematics, first class. ${jump('about')}`) },
-  experience: { d: 'where I have worked', run: () => print('<div class="grid">' + C.jobs.map(j => `<span>${j.from} to ${j.to ?? 'now'}</span><span>${j.company}: ${j.roles.map(r => r.title.split(',')[0]).join(', ')}</span>`).join('') + `</div>${jump('experience')}`) },
+  help: { d: 'show these commands', run: () => print('<div class="grid">' + Object.entries(COMMANDS).filter(([, c]) => !c.hidden).map(([k, c]) => `<span>${k}</span><span>${c.d}</span>`).join('') + '</div>Tab completes a command.') },
+  about: { d: 'who I am', run: () => print(`<b>Andy Seymour</b>, software engineer in London. Trading strategies in C++ and Python at Gambit Research; before that IBM and BAE Systems. ${jump('about')}`) },
+  experience: { d: 'where I have worked', run: () => print('<div class="grid">' + C.jobs.map(j => `<span>${j.from} to ${j.to ?? 'now'}</span><span>${j.company}</span>`).join('') + `</div>${jump('experience')}`) },
   projects: { d: 'things I build outside work', run: () => print('<div class="grid">' + C.projects.map(p => `<span>${p.name}</span><span><a href="${p.url}" target="_blank" rel="noopener">${p.host}</a></span>`).join('') + `</div>${jump('projects')}`) },
-  skills: { d: 'languages and tools', run: () => print('<div class="grid">' + C.skills.map(s => `<span>${s.group}</span><span>${s.items}</span>`).join('') + '</div>') },
-  education: { d: 'degree', run: () => print('MSc Mathematics, first class, University of Leicester. Four module prizes.') },
-  contact: { d: 'how to reach me', run: () => print(`<a href="mailto:${C.email}">${C.email}</a>  or ${C.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener">${l.label}</a>`).join(', ')}`) },
-  email: { d: 'write me an email', run: () => { print(`Opening your mail app for ${C.email}`); location.href = 'mailto:' + C.email } },
-  cv: { d: 'print or save my CV as a PDF', run: () => { print('Opening the print dialog. Choose "Save as PDF" to keep a copy.'); setTimeout(() => window.print(), 300) } },
-  github: { d: 'open GitHub', run: () => { print('Opening GitHub'); open(C.links[1].url) } },
-  linkedin: { d: 'open LinkedIn', run: () => { print('Opening LinkedIn'); open(C.links[0].url) } },
-  ls: { d: 'list sections', run: () => print(SECTIONS.map(s => `<span class="jump" data-jump="${s}">${s}/</span>`).join('   ')) },
-  cd: { d: 'go to a section, e.g. cd projects', args: SECTIONS, run: a => { const t = (a[0] || '').replace(/\/$/, ''); if (!t || t === '~') return go('top'); if (SECTIONS.includes(t)) { print(`Opening ${t}`); setTimeout(() => go(t), 150) } else print(`cd: no such section: ${esc(t)}. Try ls.`, 'err') } },
-  theme: { d: 'switch between dark and light', args: ['dark', 'light'], run: a => { const want = a[0] || (document.documentElement.classList.contains('light') ? 'dark' : 'light'); document.documentElement.classList.toggle('light', want === 'light'); try { localStorage.setItem('theme', want) } catch {} print(`Theme: ${want}`) } },
+  contact: { d: 'how to reach me', run: () => print(`<a href="mailto:${C.email}">${C.email}</a>, <a href="${C.links[0].url}" target="_blank" rel="noopener">LinkedIn</a> or <a href="${C.links[1].url}" target="_blank" rel="noopener">GitHub</a>`) },
+  cv: { d: 'save my CV as a PDF', run: () => { print('Opening the print dialog. Choose "Save as PDF" to keep a copy.'); setTimeout(() => window.print(), 300) } },
   clear: { d: 'clear the screen', run: () => log.replaceChildren() },
-  history: { d: 'commands you have run', run: () => print(hist.map((h, i) => `${String(i + 1).padStart(3)}  ${esc(h)}`).join('\n') || 'No history yet.') },
-  echo: { hidden: true, run: a => print(esc(a.join(' '))) },
-  pwd: { hidden: true, run: () => print('/home/andy') },
-  date: { hidden: true, run: () => print(new Date().toLocaleString('en-GB', { timeZone: 'Europe/London', dateStyle: 'full', timeStyle: 'short' }) + ' in London') },
-  exit: { hidden: true, run: () => print('There is no exit. But you can scroll down.') },
-  vim: { hidden: true, run: () => print('You are now trapped in vim. Just kidding. Type :q if it makes you feel better.') },
-  ':q': { hidden: true, run: () => print('Freedom.') },
-  hire: { hidden: true, run: () => print(`Good idea. Try <b>sudo hire andy</b>, or just <a href="mailto:${C.email}">email me</a>.`) },
+  whoami: { hidden: true, run: () => COMMANDS.about.run() },
 }
 
 /* the easter egg: anything starting with sudo */
@@ -159,7 +144,7 @@ function sudo(args) {
   }
   if (/^rm\s+-rf/.test(rest)) return print('Nice try. This site is static; there is nothing to delete. The incident has been reported to my mum.', 'err')
   print('[sudo] password for visitor: ********')
-  setTimeout(() => print(`visitor is not in the sudoers file. This incident will be reported.${rest ? '' : ''}`, 'err'), 600)
+  print('visitor is not in the sudoers file. This incident will be reported.', 'err')
 }
 
 const hist = []; let hi = 0
@@ -171,7 +156,6 @@ function run(raw) {
   const [name, ...args] = line.split(/\s+/), key = name.toLowerCase()
   if (key === 'sudo') sudo(args)
   else if (COMMANDS[key]) COMMANDS[key].run(args)
-  else if (SECTIONS.includes(key.replace(/\/$/, ''))) COMMANDS.cd.run([key])
   else print(`command not found: ${esc(name)}. Type <b>help</b> to see what I can do.`, 'err')
   atoms.burst()
   while (log.children.length > 60) log.firstChild.remove()
@@ -197,7 +181,7 @@ input.addEventListener('keydown', e => {
   else if (e.key === 'Tab') {
     if (!input.value && !e.shiftKey) return // let Tab move focus when there is nothing to complete
     e.preventDefault(); const c = candidates(input.value)
-    if (c.length === 1) input.value = c[0] + (c[0].includes(' ') || !COMMANDS[c[0]]?.args ? '' : ' ')
+    if (c.length === 1) input.value = c[0]
     else if (c.length > 1) { const p = common(c); if (p.length > input.value.length) input.value = p; else if (Date.now() - lastTab < 600) print(c.map(s => s.split(' ').pop()).join('   ')); lastTab = Date.now() }
     updateHint()
   }
@@ -221,7 +205,7 @@ function typeOut(cmd) {
 
 /* restore theme, greet */
 try { if (localStorage.getItem('theme') === 'light') document.documentElement.classList.add('light') } catch {}
-print('Welcome. Type <b>help</b>, use Tab to complete, or click a command below.')
+print('Welcome. Type <b>help</b>, use Tab completes, or click a command below.')
 const fine = matchMedia('(hover: hover) and (pointer: fine)').matches
 if (matchMedia('(prefers-reduced-motion: reduce)').matches) run('whoami'); else setTimeout(() => typeOut('whoami'), 700)
 if (fine) input.focus({ preventScroll: true })
