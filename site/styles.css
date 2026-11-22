@@ -55,6 +55,10 @@ section.s { padding: clamp(70px, 10vw, 120px) 0 0; scroll-margin-top: 10px; }
 .projects img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; border-radius: 10px; box-shadow: 0 0 0 1px var(--line); display: block; filter: grayscale(.35); transition: filter .3s, transform .4s cubic-bezier(.2, .8, .2, 1); }
 .projects a:hover img { filter: none; transform: translateY(-3px); }
 .projects b { display: block; margin-top: 12px; font-weight: 600; } .projects p { color: var(--mute); font-size: 15px; } .projects span { color: var(--link); font: 13px "Geist Mono", monospace; }
+.patents { list-style: none; } .patents li { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 6px 40px; padding: 20px 0; border-top: 1px solid var(--line); }
+.patents b { font-weight: 600; } .patents p { color: var(--mute); max-width: 60ch; }
+.patents .num { font: 13.5px/1.6 "Geist Mono", monospace; display: flex; flex-direction: column; } .patents .num small { color: var(--faint); font-size: 12.5px; }
+@media (max-width: 760px) { .patents li { grid-template-columns: 1fr; } }
 .skills { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 40px; } .skills b { font-weight: 600; display: block; } .skills p { color: var(--mute); }
 .contact { padding-bottom: 40px; } .contact .mail { font-size: clamp(26px, 4.2vw, 46px); font-weight: 600; letter-spacing: -.03em; color: var(--fg); } .contact .mail:hover { color: var(--accent); text-decoration: none; }
 .contact .links { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 14px; }

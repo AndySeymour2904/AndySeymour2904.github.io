@@ -38,6 +38,15 @@ window.CV = {
     { name: "What's Live", url: 'https://whatslive.guide', host: 'whatslive.guide', img: 'img/whatslive.jpg', text: 'Every live sport on UK TV in one calendar, merged from listings, fixtures and EPG data.' },
     { name: 'TOPIK Trainer', url: 'https://topiktrainer.com', host: 'topiktrainer.com', img: 'img/topik.jpg', text: 'Korean reading exam practice on 480 past-paper questions, with sync and mock tests.' },
   ],
+  // Co-invented at IBM through its internal invention programme, alongside the day job.
+  patents: [
+    { title: 'Pressure-sensitive PIN entry', number: 'US 10,216,311', url: 'https://patents.google.com/patent/US10216311B2/en', year: 2019,
+      text: 'Hides a PIN from anyone watching: light key presses are silently ignored as decoys, while every press looks the same on screen.', also: 'Continued as US 10,528,717 and US 11,093,067' },
+    { title: 'Compensating for hand tremors on touchscreens', number: 'US 10,747,429', url: 'https://patents.google.com/patent/US10747429B2/en', year: 2020,
+      text: 'Tracks a finger as it approaches the screen, predicts the intended target and enlarges it before the touch lands.', also: 'Continued as US 11,003,354' },
+    { title: 'Choosing which account pays', number: 'US 2018/0260801', url: 'https://patents.google.com/patent/US20180260801A1/en', year: 2018, application: true,
+      text: 'Weighs context such as calendar, location and photos to decide whether a purchase is business or personal.' },
+  ],
   education: { degree: 'MSc Mathematics, First Class', school: 'University of Leicester', note: 'Four module prizes' },
 }
 
@@ -62,6 +71,8 @@ const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&
 $('#jobs').append(...C.jobs.map(j => h('article', { class: 'job' }, h('div', {}, h('h3', {}, j.company), h('p', { class: 'when' }, `${j.from} to ${j.to ?? 'now'}, ${j.place}`)),
   h('ul', {}, j.roles.map(r => h('li', {}, h('b', {}, r.title), r.tags.length ? h('div', { class: 'tags' }, r.tags.join('  ')) : null, h('p', {}, r.text)))))))
 $('#proj').append(...C.projects.map(p => h('a', { href: p.url, target: '_blank', rel: 'noopener' }, h('img', { src: p.img, alt: `${p.name} screenshot`, loading: 'lazy' }), h('b', {}, p.name), h('p', {}, p.text), h('span', {}, p.host))))
+$('#pat').append(...C.patents.map(p => h('li', {}, h('div', {}, h('b', {}, p.title), h('p', {}, p.text)),
+  h('div', { class: 'num' }, h('a', { href: p.url, target: '_blank', rel: 'noopener' }, p.number), h('small', {}, p.application ? `Published application, ${p.year}` : `Granted ${p.year}`), p.also ? h('small', {}, p.also) : null))))
 $('#sk').append(...C.skills.map(s => h('div', {}, h('b', {}, s.group), h('p', {}, s.items))))
 $('#links').append(...C.links.map(l => h('a', { href: l.url }, l.label)))
 
@@ -74,7 +85,7 @@ const open = url => window.open(url, '_blank', 'noopener')
 
 const COMMANDS = {
   help: { d: 'show these commands', run: () => print('<div class="grid">' + Object.entries(COMMANDS).filter(([, c]) => !c.hidden).map(([k, c]) => `<span>${k}</span><span>${c.d}</span>`).join('') + '</div>Tab completes a command.') },
-  about: { d: 'who I am', run: () => print(`<b>Andy Seymour</b>, software engineer in London. Trading strategies in C++ and Python at Gambit Research; before that IBM and BAE Systems. ${jump('about')}`) },
+  about: { d: 'who I am', run: () => print(`<b>Andy Seymour</b>, software engineer in London. Trading strategies in C++ and Python at Gambit Research; before that IBM and BAE Systems. Two US patents. ${jump('about')}`) },
   experience: { d: 'where I have worked', run: () => print('<div class="grid">' + C.jobs.map(j => `<span>${j.from} to ${j.to ?? 'now'}</span><span>${j.company}</span>`).join('') + `</div>${jump('experience')}`) },
   projects: { d: 'things I build outside work', run: () => print('<div class="grid">' + C.projects.map(p => `<span>${p.name}</span><span><a href="${p.url}" target="_blank" rel="noopener">${p.host}</a></span>`).join('') + `</div>${jump('projects')}`) },
   contact: { d: 'how to reach me', run: () => print(`<a href="mailto:${C.email}">${C.email}</a>, <a href="${C.links[0].url}" target="_blank" rel="noopener">LinkedIn</a> or <a href="${C.links[1].url}" target="_blank" rel="noopener">GitHub</a>`) },
