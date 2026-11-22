@@ -1,7 +1,11 @@
 # andyseymour.dev
 
-Personal site and CV, written as a short maths paper. Plain HTML, CSS and JS in `site/`, with no build step.
+Personal site and CV. Plain HTML, CSS and JS in `site/`, with no framework.
 
-- **Preview:** `python3 -m http.server -d site 8080`
-- **Deploy:** push to `dev`. The workflow publishes `site/` to the `master` branch, which GitHub Pages serves at andyseymour.dev (`site/CNAME`).
-- **Print as CV:** the print stylesheet turns the page into an A4 CV (the "Print as CV" button, or Ctrl+P → Save as PDF).
+- **Content:** the CV data (jobs, projects, skills, links) is the `CV` object at the top of `site/script.js`.
+  The photo is `site/img/me.jpg`.
+- **The prompt:** commands live in `COMMANDS` in `site/script.js`; anything starting with `sudo` is the easter egg.
+- **Preview:** `npm install`, then `npm run dev` → http://192.168.122.50:8787
+- **Check:** `npm run check` (broken links, missing images, JS syntax, wrangler dry run).
+- **Deploy:** push to `dev`. Cloudflare Workers Builds serves `site/` at andyseymour.dev. Setup: [docs/DEPLOY.md](docs/DEPLOY.md).
+- **Print as CV:** the print stylesheet turns the page into a CV (the `cv` command, the CV link, or Ctrl+P → Save as PDF).

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Not found, Andy Seymour</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script>try { const t = localStorage.getItem('theme'); if (t ? t === 'light' : matchMedia('(prefers-color-scheme: light)').matches) document.documentElement.classList.add('light') } catch {}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #0c0d10; --fg: #e6e8ec; --mute: #8b919c; --faint: #5b616c; --accent: #7ee2a8; --link: #9ecbff; --err: #f2a7a7; }
+  :root.light { --bg: #fbfbfa; --fg: #17181b; --mute: #5f646d; --faint: #9aa0a8; --accent: #0f8a52; --link: #1f5fd1; --err: #b42318; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--fg); font: 15.5px/1.75 "Geist Mono", ui-monospace, monospace; min-height: 100svh; display: grid; place-content: center; padding: 20px; }
+  .ps { color: var(--accent); } .ps i { font-style: normal; color: var(--faint); }
+  .err { color: var(--err); overflow-wrap: anywhere; } .out { color: var(--mute); } a { color: var(--link); }
+</style>
+</head>
+<body>
+<main>
+  <div><span class="ps">andy<i>@</i>london <i>~</i> $</span> cd <span id="path">this-page</span></div>
+  <div class="err">cd: no such page</div>
+  <div class="out">Try <a href="/">the home page</a>.</div>
+</main>
+<script>document.getElementById('path').textContent = decodeURIComponent(location.pathname).slice(1) || '/'</script>
+</body>
+</html>

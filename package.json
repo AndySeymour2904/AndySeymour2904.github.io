@@ -1,0 +1,18 @@
+{
+  "name": "andyseymour.dev",
+  "private": true,
+  "description": "Personal site and CV. Static HTML, CSS and JS in site/, served by a Cloudflare Worker.",
+  "scripts": {
+    "dev": "wrangler dev --ip 0.0.0.0 --port 8787",
+    "check": "node scripts/check.mjs && wrangler deploy --dry-run --outdir .wrangler/dry-run",
+    "build": "node scripts/check.mjs",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.151.2"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "workerd@1.20261119.1": true
+  }
+}

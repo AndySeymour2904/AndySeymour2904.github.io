@@ -1,0 +1,15 @@
+// andyseymour.dev: a Cloudflare Worker that only serves static assets from ./site.
+// There is no Worker script, so every request is a static-asset request (unmetered on the
+// free plan). Workers Builds deploys it from GitHub on every push to `dev`; see docs/DEPLOY.md.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "andyseymour",
+  "compatibility_date": "2026-11-20",
+  "assets": {
+    "directory": "./site",
+    // Unknown paths get site/404.html with a 404 status.
+    "not_found_handling": "404-page"
+  }
+  // andyseymour.dev and www.andyseymour.dev are attached in the dashboard
+  // (Settings → Domains & Routes), not here: a `routes` entry would make wrangler manage them.
+}
