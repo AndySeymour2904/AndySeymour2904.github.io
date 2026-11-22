@@ -1,156 +1,214 @@
-(() => {
+// Shared content for every design option. Edit once, all designs update.
+window.CV = {
+  name: 'Andy Seymour',
+  title: 'Software Engineer',
+  location: 'London, UK',
+  now: 'Strategy development, Gambit Research',
+  summary: "Software engineer with twelve years in production systems. At Gambit Research I write trading strategies in C++ and Python. I joined to lead the data team and moved through internal tools before that. Before Gambit I spent four years at IBM building integration products, and started on flight software at BAE Systems.",
+  short: 'I write trading strategies in C++ and Python at Gambit Research. Previously data team lead, IBM and BAE Systems.',
+  email: 'aseymour917@gmail.com',
+  links: [
+    { label: 'LinkedIn', url: 'https://www.linkedin.com/in/andy-seymour-86a24ab1/' },
+    { label: 'GitHub', url: 'https://github.com/AndySeymour2904' },
+    { label: 'Stack Overflow', url: 'https://stackoverflow.com/users/1911439/andrew-seymour' },
+  ],
+  jobs: [
+    { company: 'Gambit Research', place: 'London', from: 2019, to: null, roles: [
+      { title: 'Strategy Development', tags: ['C++', 'Python'], text: 'Coding the trading strategies in C++ and Python.' },
+      { title: 'Tools', tags: [], text: 'Internal software for the trading and research teams.' },
+      { title: 'Data Team Lead', tags: ['Spark', 'Hadoop', 'Python', 'React', 'AWS'], text: 'Led the data team. Owned the ETL pipelines and brought new data sources onto the platform. Built web tools for analysts and helped technical and non-technical staff work with large datasets in HDFS.' },
+    ] },
+    { company: 'IBM', place: 'Hursley', from: 2015, to: 2019, roles: [
+      { title: 'Frontend Developer, Cloud Integration Platform', tags: ['React', 'Redux', 'Node'], text: 'Rebuilt UIs and UX as the product moved from on-premise to SaaS and PaaS. Worked across several squads on tight deadlines and pushed for pair programming and a cleaner front-end architecture.' },
+      { title: 'Full Stack Developer, App Connect', tags: ['React', 'Angular', 'Node'], text: 'Full-stack work across several microservices. Introduced UI testing to the department and shipped complex features in an award-winning UI alongside the design team.' },
+      { title: 'Software Developer, MQ', tags: ['C', 'Angular'], text: 'Features and open-source integration in a large, multi-platform C codebase.' },
+    ] },
+    { company: 'BAE Systems', place: 'Warton', from: 2014, to: 2015, roles: [
+      { title: 'Software Engineer', tags: ['Ada', 'C++'], text: 'Display systems and controls for the Eurofighter Typhoon, and the vehicle health management system for the F‑35. Safety-critical code written to an exact specification and rigorously tested.' },
+    ] },
+  ],
+  skills: [
+    { group: 'Languages', items: 'C++, Python, TypeScript, JavaScript, SQL, C, Ada' },
+    { group: 'Data', items: 'Spark, Hadoop / HDFS, Kafka, pandas, ETL pipelines' },
+    { group: 'Web', items: 'React, Node, Next.js, Preact, Redux' },
+    { group: 'Infrastructure', items: 'AWS, Cloudflare Workers, Docker, Kubernetes, CI/CD, Linux' },
+  ],
+  projects: [
+    { name: 'FPL Outlook', url: 'https://fploutlook.com', host: 'fploutlook.com', img: 'img/fpl.jpg', text: 'Fantasy Premier League planner: projections, odds and line-ups from five data sources.' },
+    { name: "What's Live", url: 'https://whatslive.guide', host: 'whatslive.guide', img: 'img/whatslive.jpg', text: 'Every live sport on UK TV in one calendar, merged from listings, fixtures and EPG data.' },
+    { name: 'TOPIK Trainer', url: 'https://topiktrainer.com', host: 'topiktrainer.com', img: 'img/topik.jpg', text: 'Korean reading exam practice on 480 past-paper questions, with sync and mock tests.' },
+  ],
+  education: { degree: 'MSc Mathematics, First Class', school: 'University of Leicester', note: 'Four module prizes' },
+}
+
+// Tiny helpers shared by the designs
+window.h = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag)
+  for (const k in attrs) {
+    if (k === 'class') n.className = attrs[k]
+    else if (k === 'html') n.innerHTML = attrs[k]
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), attrs[k])
+    else if (attrs[k] != null) n.setAttribute(k, attrs[k])
+  }
+  for (const c of kids.flat(Infinity)) if (c != null && c !== false) n.append(c.nodeType ? c : document.createTextNode(c))
+  return n
+}
+window.years = j => `${j.from} – ${j.to ?? 'now'}`
+
+const C = CV, $ = s => document.querySelector(s)
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])
+
+/* ---------- sections ---------- */
+$('#jobs').append(...C.jobs.map(j => h('article', { class: 'job' }, h('div', {}, h('h3', {}, j.company), h('p', { class: 'when' }, `${j.from} to ${j.to ?? 'now'}, ${j.place}`)),
+  h('ul', {}, j.roles.map(r => h('li', {}, h('b', {}, r.title), r.tags.length ? h('div', { class: 'tags' }, r.tags.join('  ')) : null, h('p', {}, r.text)))))))
+$('#proj').append(...C.projects.map(p => h('a', { href: p.url, target: '_blank', rel: 'noopener' }, h('img', { src: p.img, alt: `${p.name} screenshot`, loading: 'lazy' }), h('b', {}, p.name), h('p', {}, p.text), h('span', {}, p.host))))
+$('#sk').append(...C.skills.map(s => h('div', {}, h('b', {}, s.group), h('p', {}, s.items))))
+$('#links').append(...C.links.map(l => h('a', { href: l.url }, l.label)))
+
+/* ---------- the shell ---------- */
+const log = $('#log'), input = $('#cmd'), hint = $('#hint'), shell = $('#shell')
+const jump = id => `<span class="jump" data-jump="${id}">open the ${id} section</span>`
+const print = (html, cls = 'out') => { log.insertAdjacentHTML('beforeend', `<div class="ln ${cls}">${html}</div>`); log.scrollTop = log.scrollHeight }
+const go = id => { const el = document.getElementById(id); if (el) el.scrollIntoView({ block: 'start' }) }
+const open = url => window.open(url, '_blank', 'noopener')
+
+const COMMANDS = {
+  help: { d: 'show these commands', run: () => print('<div class="grid">' + Object.entries(COMMANDS).filter(([, c]) => !c.hidden).map(([k, c]) => `<span>${k}</span><span>${c.d}</span>`).join('') + '</div>Tab completes a command.') },
+  about: { d: 'who I am', run: () => print(`<b>Andy Seymour</b>, software engineer in London. Trading strategies in C++ and Python at Gambit Research; before that IBM and BAE Systems. ${jump('about')}`) },
+  experience: { d: 'where I have worked', run: () => print('<div class="grid">' + C.jobs.map(j => `<span>${j.from} to ${j.to ?? 'now'}</span><span>${j.company}</span>`).join('') + `</div>${jump('experience')}`) },
+  projects: { d: 'things I build outside work', run: () => print('<div class="grid">' + C.projects.map(p => `<span>${p.name}</span><span><a href="${p.url}" target="_blank" rel="noopener">${p.host}</a></span>`).join('') + `</div>${jump('projects')}`) },
+  contact: { d: 'how to reach me', run: () => print(`<a href="mailto:${C.email}">${C.email}</a>, <a href="${C.links[0].url}" target="_blank" rel="noopener">LinkedIn</a> or <a href="${C.links[1].url}" target="_blank" rel="noopener">GitHub</a>`) },
+  cv: { d: 'save my CV as a PDF', run: () => { print('Opening the print dialog. Choose "Save as PDF" to keep a copy.'); setTimeout(() => window.print(), 300) } },
+  clear: { d: 'clear the screen', run: () => log.replaceChildren() },
+  whoami: { hidden: true, run: () => COMMANDS.about.run() },
+}
+
+/* the easter egg: anything starting with sudo */
+function sudo(args) {
+  const rest = args.join(' ').trim()
+  if (/^hire( andy)?$/.test(rest)) {
+    print('[sudo] password for recruiter: ********')
+    setTimeout(() => { print('<b>Permission granted.</b> Opening a new email to Andy. Good choice.'); setTimeout(() => location.href = `mailto:${C.email}?subject=${encodeURIComponent("Let's talk")}`, 900) }, 700)
+    return
+  }
+  if (/^rm\s+-rf/.test(rest)) return print('Nice try. This site is static; there is nothing to delete. The incident has been reported to my mum.', 'err')
+  print('[sudo] password for visitor: ********')
+  print('visitor is not in the sudoers file. This incident will be reported.', 'err')
+}
+
+const hist = []; let hi = 0
+function run(raw) {
+  const line = raw.trim()
+  print(`<span class="ps">andy<i>@</i>london <i>~</i> $</span> ${esc(line)}`, 'cmdline')
+  if (!line) return
+  hist.push(line); hi = hist.length
+  const [name, ...args] = line.split(/\s+/), key = name.toLowerCase()
+  if (key === 'sudo') sudo(args)
+  else if (COMMANDS[key]) COMMANDS[key].run(args)
+  else print(`command not found: ${esc(name)}. Type <b>help</b> to see what I can do.`, 'err')
+  atoms.burst()
+  while (log.children.length > 60) log.firstChild.remove()
+}
+
+/* completion: commands first, then arguments; a second Tab lists the options */
+const visible = () => Object.keys(COMMANDS).filter(k => !COMMANDS[k].hidden)
+function candidates(v) {
+  const parts = v.split(/\s+/)
+  if (parts.length <= 1) return visible().filter(k => k.startsWith(parts[0].toLowerCase())).map(k => k)
+  const c = COMMANDS[parts[0].toLowerCase()]; if (!c?.args) return []
+  return c.args.filter(a => a.startsWith(parts[parts.length - 1])).map(a => [...parts.slice(0, -1), a].join(' '))
+}
+const common = list => list.reduce((p, s) => { let i = 0; while (i < p.length && p[i] === s[i]) i++; return p.slice(0, i) })
+let lastTab = 0
+function updateHint() {
+  const v = input.value, c = v ? candidates(v) : []
+  hint.textContent = c.length === 1 && c[0].length > v.length ? v + c[0].slice(v.length) : ''
+}
+input.addEventListener('input', updateHint)
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); const v = input.value; input.value = ''; hint.textContent = ''; run(v) }
+  else if (e.key === 'Tab') {
+    if (!input.value && !e.shiftKey) return // let Tab move focus when there is nothing to complete
+    e.preventDefault(); const c = candidates(input.value)
+    if (c.length === 1) input.value = c[0]
+    else if (c.length > 1) { const p = common(c); if (p.length > input.value.length) input.value = p; else if (Date.now() - lastTab < 600) print(c.map(s => s.split(' ').pop()).join('   ')); lastTab = Date.now() }
+    updateHint()
+  }
+  else if (e.key === 'ArrowUp') { if (hi > 0) { input.value = hist[--hi]; e.preventDefault(); updateHint() } }
+  else if (e.key === 'ArrowDown') { if (hi < hist.length) { input.value = hist[++hi] ?? ''; e.preventDefault(); updateHint() } }
+  else if (e.key === 'l' && e.ctrlKey) { e.preventDefault(); log.replaceChildren() }
+  else if (e.key === 'ArrowRight' && hint.textContent && input.selectionStart === input.value.length) { input.value = hint.textContent; updateHint() }
+})
+shell.addEventListener('click', e => { const j = e.target.closest('[data-jump]'); if (j) return go(j.dataset.jump); if (!e.target.closest('a') && !getSelection().toString()) input.focus({ preventScroll: true }) })
+
+/* clickable commands for people who would rather not type */
+const chips = $('#chips')
+;['help', 'about', 'experience', 'projects', 'contact', 'cv'].forEach(c => chips.append(h('button', { type: 'button', onclick: () => typeOut(c) }, c)))
+document.querySelectorAll('[data-run]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); COMMANDS[a.dataset.run].run([]) }))
+let typing = false
+function typeOut(cmd) {
+  if (typing) return; typing = true; input.value = ''; let i = 0
+  const step = () => { input.value = cmd.slice(0, ++i); updateHint(); if (i < cmd.length) setTimeout(step, 40); else setTimeout(() => { input.value = ''; hint.textContent = ''; run(cmd); typing = false; if (matchMedia('(hover: hover)').matches) input.focus({ preventScroll: true }) }, 180) }
+  step()
+}
+
+/* theme: follows the system until you pick one */
+$('#mode').addEventListener('click', () => { const light = document.documentElement.classList.toggle('light'); try { localStorage.setItem('theme', light ? 'light' : 'dark') } catch {} })
+
+/* greet */
+print('Welcome. Type <b>help</b> and press Tab to complete, or click a command below.')
+const fine = matchMedia('(hover: hover) and (pointer: fine)').matches
+if (matchMedia('(prefers-reduced-motion: reduce)').matches) run('whoami'); else setTimeout(() => typeOut('whoami'), 700)
+if (fine) input.focus({ preventScroll: true })
+
+/* ---------- atoms: drifting nodes, linked when close, drawn to the cursor ---------- */
+const atoms = (() => {
+  const cv = $('#atoms'), x = cv.getContext('2d'), host = cv.parentElement
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
-  const canvas = document.getElementById('field')
-  const hero = document.querySelector('.hero')
-  const mode = new URLSearchParams(location.search).get('hero') || 'topo'
-
-  /* nav background after the hero */
-  const nav = document.querySelector('.nav')
-  const onScroll = () => nav.classList.toggle('solid', scrollY > innerHeight * 0.8)
-  addEventListener('scroll', onScroll, { passive: true }); onScroll()
-
-  document.getElementById('print').addEventListener('click', () => print())
-
-  /* reveal on scroll */
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }), { threshold: 0.12 })
-  document.querySelectorAll('.lede, .co, .skills > div, .proj, .edu').forEach(n => { n.classList.add('reveal'); io.observe(n) })
-
-  /* shared pointer state, relative to hero */
-  const ptr = { x: -1e4, y: -1e4, active: 0 }
-  hero.addEventListener('pointermove', e => { const r = hero.getBoundingClientRect(); ptr.x = e.clientX - r.left; ptr.y = e.clientY - r.top; ptr.active = 1 })
-  hero.addEventListener('pointerleave', () => { ptr.active = 0 })
-  let visible = true
-  new IntersectionObserver(es => { visible = es[0].isIntersecting }).observe(hero)
-
-  if (mode === 'particles') particles(); else topo()
-
-  /* ---------- A: topographic contour field (WebGL2) ---------- */
-  function topo() {
-    const gl = canvas.getContext('webgl2', { antialias: false })
-    if (!gl) return
-    const vs = `#version 300 es
-    in vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }`
-    const fs = `#version 300 es
-    precision highp float;
-    uniform vec2 R; uniform float T; uniform vec2 M; uniform float H;
-    out vec4 o;
-    vec2 hash(vec2 p){ p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3))); return -1. + 2. * fract(sin(p) * 43758.5453); }
-    float noise(vec2 p){
-      const float K1 = .366025404, K2 = .211324865;
-      vec2 i = floor(p + (p.x + p.y) * K1), a = p - i + (i.x + i.y) * K2;
-      float m = step(a.y, a.x); vec2 o2 = vec2(m, 1. - m), b = a - o2 + K2, c = a - 1. + 2. * K2;
-      vec3 h = max(.5 - vec3(dot(a, a), dot(b, b), dot(c, c)), 0.);
-      vec3 n = h * h * h * h * vec3(dot(a, hash(i)), dot(b, hash(i + o2)), dot(c, hash(i + 1.)));
-      return dot(n, vec3(70.));
-    }
-    float fbm(vec2 p){ float s = 0., a = .5; for (int i = 0; i < 4; i++) { s += a * noise(p); p = p * 2.02 + vec2(1.7, 9.2); a *= .5; } return s; }
-    void main(){
-      vec2 uv = (gl_FragCoord.xy - .5 * R) / R.y;
-      vec2 m = (M - .5 * R) / R.y;
-      float t = T * .02;
-      vec2 q = uv * .95;
-      vec2 w = vec2(fbm(q + t), fbm(q + vec2(5.2, 1.3) - t));
-      float h = fbm(q + w);
-      float d = length(uv - m);
-      h += H * .3 * exp(-d * d * 10.);
-      float f = h * 11.;
-      float fw = fwidth(f);
-      float minor = 1. - smoothstep(0., 1.1, abs(fract(f + .5) - .5) / fw);
-      float major = 1. - smoothstep(0., 1.4, abs(fract(f / 5. + .5) - .5) * 5. / fw);
-      float near = exp(-d * d * 12.) * H;
-      float fade = smoothstep(1.3, .2, length(uv * vec2(.75, 1.05)));
-      vec3 col = vec3(.043, .047, .055);
-      col = mix(col, vec3(.93, .92, .9), minor * .075 * fade);
-      col = mix(col, vec3(.93, .92, .9), major * .2 * fade);
-      col = mix(col, vec3(1., .42, .24), major * near * .55);
-      o = vec4(col, 1.);
-    }`
-    const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s }
-    const pr = gl.createProgram()
-    gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(pr)
-    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return
-    gl.useProgram(pr)
-    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer())
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW)
-    const loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0)
-    const u = n => gl.getUniformLocation(pr, n)
-    const uR = u('R'), uT = u('T'), uM = u('M'), uH = u('H')
-    const dpr = Math.min(devicePixelRatio, 1.5)
-    const size = () => { canvas.width = canvas.clientWidth * dpr; canvas.height = canvas.clientHeight * dpr; gl.viewport(0, 0, canvas.width, canvas.height) }
-    size(); addEventListener('resize', size)
-    let mx = canvas.clientWidth * .65, my = canvas.clientHeight * .4, hv = 0
-    const t0 = performance.now()
-    const frame = now => {
-      requestAnimationFrame(frame)
-      if (!visible) return
-      if (ptr.active) { mx += (ptr.x - mx) * .06; my += (ptr.y - my) * .06 }
-      hv += (ptr.active - hv) * .04
-      gl.uniform2f(uR, canvas.width, canvas.height)
-      gl.uniform1f(uT, reduced ? 0 : (now - t0) / 1000)
-      gl.uniform2f(uM, mx * dpr, canvas.height - my * dpr)
-      gl.uniform1f(uH, hv)
-      gl.drawArrays(gl.TRIANGLES, 0, 3)
-    }
-    requestAnimationFrame(frame)
-    canvas.classList.add('on')
+  let W, H, P = [], mx = -1e4, my = -1e4, vis = true
+  const dotRGB = () => getComputedStyle(document.documentElement).getPropertyValue('--dot').trim()
+  const accent = () => getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
+  const strength = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--atom')) || 1
+  function size() {
+    const d = Math.min(devicePixelRatio, 2); W = cv.clientWidth; H = cv.clientHeight; cv.width = W * d; cv.height = H * d; x.setTransform(d, 0, 0, d, 0, 0)
+    const n = Math.round(Math.min(130, W * H / 11000))
+    P = Array.from({ length: n }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .3, vy: (Math.random() - .5) * .3, r: Math.random() < .12 ? 2.4 : 1.1 + Math.random() * .8, ph: Math.random() * 6.28 }))
   }
-
-  /* ---------- B: the name as particles (Canvas 2D) ---------- */
-  function particles() {
-    const x = canvas.getContext('2d')
-    const h1 = document.querySelector('h1')
-    let W, H, pts = []
-    const build = () => {
-      const dpr = Math.min(devicePixelRatio, 2)
-      W = canvas.clientWidth; H = canvas.clientHeight
-      canvas.width = W * dpr; canvas.height = H * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0)
-      const off = document.createElement('canvas'); off.width = W; off.height = H
-      const o = off.getContext('2d')
-      const hr = hero.getBoundingClientRect()
-      const cs = getComputedStyle(h1)
-      o.font = `${cs.fontWeight} ${cs.fontSize} Archivo`
-      if ('fontStretch' in o) o.fontStretch = 'semi-expanded'
-      o.letterSpacing = cs.letterSpacing
-      o.textBaseline = 'alphabetic'; o.fillStyle = '#000'
-      h1.querySelectorAll('.l span').forEach(s => {
-        const r = s.getBoundingClientRect()
-        o.fillText(s.textContent.toUpperCase(), r.left - hr.left, r.top - hr.top + r.height * .86)
-      })
-      const d = o.getImageData(0, 0, W, H).data
-      const step = W < 600 ? 3 : 4
-      const old = pts; pts = []
-      for (let yy = 0; yy < H; yy += step) for (let xx = 0; xx < W; xx += step) {
-        if (d[(yy * W + xx) * 4 + 3] > 120) {
-          const p = old[pts.length] || { x: xx, y: yy, vx: 0, vy: 0 }
-          p.hx = xx; p.hy = yy; pts.push(p)
-        }
-      }
-      x.r = step * .44
-      h1.style.opacity = pts.length ? 0 : 1
-      canvas.classList.add('on')
-    }
-    document.fonts.ready.then(() => setTimeout(() => { build(); requestAnimationFrame(tick) }, 1300))
-    let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 150) })
-    const R = 80
-    function tick() {
-      requestAnimationFrame(tick)
-      if (!visible) return
-      x.clearRect(0, 0, W, H)
-      const moving = []
-      x.fillStyle = '#ecebe6'
-      for (const p of pts) {
-        if (ptr.active && !reduced) {
-          const dx = p.x - ptr.x, dy = p.y - ptr.y, dd = dx * dx + dy * dy
-          if (dd < R * R) { const dist = Math.sqrt(dd) || 1, f = (1 - dist / R) * 1.4; p.vx += dx / dist * f; p.vy += dy / dist * f }
-        }
-        p.vx = (p.vx + (p.hx - p.x) * .06) * .8
-        p.vy = (p.vy + (p.hy - p.y) * .06) * .8
+  size(); addEventListener('resize', size)
+  host.addEventListener('pointermove', e => { const r = host.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top })
+  host.addEventListener('pointerleave', () => { mx = my = -1e4 })
+  new IntersectionObserver(e => vis = e[0].isIntersecting).observe(host)
+  let col = dotRGB(), acc = accent(), k = strength(); new MutationObserver(() => { col = dotRGB(); acc = accent(); k = strength() }).observe(document.documentElement, { attributes: true })
+  const LINK = 130, MOUSE = 180
+  ;(function frame(t) {
+    requestAnimationFrame(frame); if (!vis) return
+    x.clearRect(0, 0, W, H)
+    for (const p of P) {
+      if (!reduced) {
+        const dx = mx - p.x, dy = my - p.y, d = Math.hypot(dx, dy)
+        if (d < MOUSE && d > 1) { p.vx += dx / d * .012; p.vy += dy / d * .012 }
+        p.vx *= .992; p.vy *= .992
+        const sp = Math.hypot(p.vx, p.vy); if (sp > 1.6) { p.vx *= 1.6 / sp; p.vy *= 1.6 / sp } if (sp < .08) { p.vx += (Math.random() - .5) * .03; p.vy += (Math.random() - .5) * .03 }
         p.x += p.vx; p.y += p.vy
-        if (Math.abs(p.vx) + Math.abs(p.vy) > 1.2) moving.push(p)
-        else x.fillRect(p.x - x.r, p.y - x.r, x.r * 2, x.r * 2)
+        if (p.x < -20) p.x = W + 20; if (p.x > W + 20) p.x = -20; if (p.y < -20) p.y = H + 20; if (p.y > H + 20) p.y = -20
       }
-      x.fillStyle = '#ff6a3d'
-      for (const p of moving) x.fillRect(p.x - x.r, p.y - x.r, x.r * 2, x.r * 2)
     }
-  }
+    x.lineWidth = 1
+    for (let i = 0; i < P.length; i++) for (let j = i + 1; j < P.length; j++) {
+      const a = P[i], b = P[j], d = Math.hypot(a.x - b.x, a.y - b.y); if (d > LINK) continue
+      x.strokeStyle = `rgba(${col},${Math.min(1, (1 - d / LINK) * .22 * k)})`; x.beginPath(); x.moveTo(a.x, a.y); x.lineTo(b.x, b.y); x.stroke()
+    }
+    for (const p of P) {
+      const d = Math.hypot(mx - p.x, my - p.y)
+      if (d < MOUSE) { x.strokeStyle = acc; x.globalAlpha = Math.min(1, (1 - d / MOUSE) * .55 * Math.sqrt(k)); x.beginPath(); x.moveTo(mx, my); x.lineTo(p.x, p.y); x.stroke(); x.globalAlpha = 1 }
+      x.fillStyle = `rgba(${col},${Math.min(1, (p.r > 2 ? .75 : .5) * Math.sqrt(k))})`; x.beginPath(); x.arc(p.x, p.y, p.r, 0, 6.283); x.fill()
+      if (p.r > 2 && !reduced) { // a few atoms have an orbiting electron
+        const a = t / 900 + p.ph; x.strokeStyle = `rgba(${col},${.18 * k})`; x.beginPath(); x.ellipse(p.x, p.y, 9, 4, p.ph, 0, 6.283); x.stroke()
+        const ex = p.x + Math.cos(a) * 9 * Math.cos(p.ph) - Math.sin(a) * 4 * Math.sin(p.ph), ey = p.y + Math.cos(a) * 9 * Math.sin(p.ph) + Math.sin(a) * 4 * Math.cos(p.ph)
+        x.fillStyle = acc; x.beginPath(); x.arc(ex, ey, 1.2, 0, 6.283); x.fill()
+      }
+    }
+  })(0)
+  // a command nudges nearby atoms outward from the prompt
+  return { burst() { if (reduced) return; const r = input.getBoundingClientRect(), hr = host.getBoundingClientRect(), cx = r.left - hr.left, cy = r.top - hr.top; for (const p of P) { const dx = p.x - cx, dy = p.y - cy, d = Math.hypot(dx, dy) || 1; if (d < 360) { const f = (1 - d / 360) * 2.2; p.vx += dx / d * f; p.vy += dy / d * f } } } }
 })()
