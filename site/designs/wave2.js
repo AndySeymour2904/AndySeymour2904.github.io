@@ -10,7 +10,7 @@ window.Wave2 = function (cv, o = {}) {
   const dot = o.dot || [245, 245, 247], glow = o.glow || [41, 151, 255], line = o.line || '#7fb5ff'
   const spotK = o.spot ?? 1, spotX = o.spotX ?? .5
   let W, H, NX, NZ, fov, horizon, X0, X1
-  const camY = -1.25, Z0 = 1.6, Z1 = 17
+  const camY = o.camY ?? -1.25, Z0 = 1.6, Z1 = 17
   function size() {
     const dpr = Math.min(devicePixelRatio, 2); W = cv.clientWidth; H = cv.clientHeight
     if (!W || !H) return
@@ -26,7 +26,7 @@ window.Wave2 = function (cv, o = {}) {
   const ripples = []
   host.addEventListener('pointerdown', e => { if (e.target.closest('a,button')) return; const p = toPlane(ptr.sx, ptr.sy); if (p) ripples.push({ x: p[0], z: p[1], t: performance.now() }) })
   const toPlane = (sx, sy) => { if (sy <= horizon + 4) return null; const rz = -camY * fov / (sy - horizon); return [(sx - W / 2) * rz / fov, rz] }
-  let cx = 0, cz = 7, amp = 0, vis = true
+  let cx = 0, cz = 7, amp = 0, vis = true, boost = 0
   new IntersectionObserver(e => vis = e[0].isIntersecting).observe(cv)
   const t0 = performance.now()
   const rgb = (c, a) => `rgb(${c[0]},${c[1]},${c[2]})`
@@ -40,16 +40,17 @@ window.Wave2 = function (cv, o = {}) {
     cx += (tx - cx) * follow; cz += (tz - cz) * follow
     amp += ((p ? 1 : .55) - amp) * .04
     while (ripples.length && now - ripples[0].t > 4000) ripples.shift()
+    boost *= .965
     x.clearRect(0, 0, W, H)
     const near = []
     for (let j = NZ - 1; j >= 0; j--) {
       const gz = Z0 + (j / (NZ - 1)) ** 1.15 * (Z1 - Z0), depth = 1 - (gz - Z0) / (Z1 - Z0)
       for (let i = 0; i < NX; i++) {
         const gx = X0 + i / (NX - 1) * (X1 - X0)
-        let gy = (Math.sin(gx * .42 + t * .7) * .32 + Math.cos(gz * .38 - t * .55) * .3 + Math.sin((gx * .6 + gz) * .27 + t * .35) * .22) * ease
+        let gy = (Math.sin(gx * .42 + t * .7) * .32 + Math.cos(gz * .38 - t * .55) * .3 + Math.sin((gx * .6 + gz) * .27 + t * .35) * .22) * ease * (o.amp ?? 1) * (1 + boost)
         const dx = gx - cx, dz = gz - cz, bump = Math.exp(-(dx * dx + dz * dz) / 4) * 1.1 * amp
         gy += bump
-        for (const r of ripples) { const age = (now - r.t) / 1000, f = Math.hypot(gx - r.x, gz - r.z) - age * 6; gy += Math.exp(-f * f * 1.4) * Math.cos(f * 3) * .55 * Math.exp(-age * .8) }
+        for (const r of ripples) { const age = (now - r.t) / 1000, f = Math.hypot(gx - r.x, gz - r.z) - age * 6; gy += Math.exp(-f * f * 1.4) * Math.cos(f * 3) * .55 * (r.k || 1) * Math.exp(-age * .8) }
         const px = W / 2 + gx / gz * fov, py = horizon + (gy - camY) / gz * fov
         if (px < -4 || px > W + 4 || py < -4 || py > H + 4) continue
         const sxn = (px - W * spotX) / (W * .26), spot = (1 - spotK) + spotK * Math.exp(-sxn * sxn) * (.3 + .7 * Math.exp(-((gz - 5) ** 2) / 18))
@@ -73,6 +74,11 @@ window.Wave2 = function (cv, o = {}) {
     x.globalAlpha = 1
   }
   requestAnimationFrame(frame)
+  // hooks so other parts of the page can drive the surface
+  return {
+    ripple(nx = .5, nz = .35, k = 1) { if (!W) return; ripples.push({ x: X0 + nx * (X1 - X0), z: Z0 + nz * (Z1 - Z0), t: performance.now(), k }) },
+    pulse(k = .6) { boost = Math.min(2, boost + k) },
+  }
 }
 
 /* The portrait rebuilt from dots: samples a photo's brightness into points that
