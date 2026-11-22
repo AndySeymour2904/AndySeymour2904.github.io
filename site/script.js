@@ -6,7 +6,7 @@ window.CV = {
   now: 'Strategy development, Gambit Research',
   summary: "Software engineer with twelve years in production systems. At Gambit Research I write trading strategies in C++ and Python. I joined to lead the data team and moved through internal tools before that. Before Gambit I spent four years at IBM building integration products, and started on flight software at BAE Systems.",
   short: 'I write trading strategies in C++ and Python at Gambit Research. Previously data team lead, IBM and BAE Systems.',
-  email: 'aseymour917@gmail.com',
+  email: 'andy@andyseymour.dev',
   links: [
     { label: 'LinkedIn', url: 'https://www.linkedin.com/in/andy-seymour-86a24ab1/' },
     { label: 'GitHub', url: 'https://github.com/AndySeymour2904' },
