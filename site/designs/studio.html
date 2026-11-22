@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Avatar, wave and editor options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<!-- Full-body placeholder silhouette (img/body-*.png) is traced from "A man (John Lubbock of Wikimedia UK) holding a laptop on a white backdrop", Wikimedia Commons, CC BY-SA 4.0. Replace with a real photo. -->
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font: 400 17px/1.5 "Inter Tight", system-ui, sans-serif; letter-spacing: -.01em; -webkit-font-smoothing: antialiased; background: #000; }
+  a { color: inherit; text-decoration: none; }
+  .v { position: relative; min-height: 100svh; overflow: hidden; isolation: isolate; }
+  .v > canvas.wave, .v > canvas.net { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; }
+  .tag { position: absolute; z-index: 50; top: 12px; left: 12px; font: 500 12px "Geist Mono", monospace; padding: 5px 9px; border-radius: 6px; background: #ffffffe6; color: #111; box-shadow: 0 0 0 1px #0002; }
+  .toc { position: fixed; z-index: 60; right: 10px; top: 50%; transform: translateY(-50%); display: grid; gap: 3px; }
+  .toc a { font: 500 11px "Geist Mono", monospace; background: #ffffffd9; color: #111; padding: 3px 6px; border-radius: 5px; text-align: center; box-shadow: 0 0 0 1px #0002; }
+  @media (max-width: 700px) { .toc { display: none; } }
+  .z { position: relative; z-index: 2; }
+  .mono { font-family: "Geist Mono", monospace; }
+
+  /* shared bits */
+  .ring { width: var(--s, 140px); height: var(--s, 140px); border-radius: 50%; padding: 4px; background: conic-gradient(from 210deg, var(--r1, #7aa2ff), var(--r2, #a5f3fc), var(--r1, #7aa2ff)); flex: none; }
+  .ring img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid var(--rb, #0b1224); display: block; }
+  .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .b { padding: 10px 18px; border-radius: 10px; font-size: 15px; font-weight: 500; }
+  .pill { padding: 11px 22px; border-radius: 99px; font-weight: 500; font-size: 16px; }
+  /* editor window, two themes */
+  .ed { border-radius: 14px; overflow: hidden; text-align: left; }
+  .ed .bar { display: flex; align-items: center; gap: 12px; padding: 10px 14px; font: 13px "Geist Mono", monospace; }
+  .ed .bar .dots i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+  .ed .tab { display: flex; align-items: center; gap: 8px; padding: 5px 12px; border-radius: 6px; } .ed .tab img { width: 18px; height: 18px; border-radius: 50%; object-fit: cover; }
+  .ed pre { font: 14.5px/1.75 "Geist Mono", monospace; padding: 22px 24px; overflow: auto; white-space: pre; }
+  .ed.dark { background: #161b22; color: #c9d1d9; box-shadow: 0 50px 100px -40px #000, 0 0 0 1px #30363d; } .ed.dark .bar { background: #0d1117; border-bottom: 1px solid #30363d; } .ed.dark .tab { background: #161b22; } .ed.dark .dots i { background: #30363d; }
+  .ed.dark .k { color: #ff7b72 } .ed.dark .s { color: #a5d6ff } .ed.dark .n { color: #79c0ff } .ed.dark .c { color: #8b949e } .ed.dark .f { color: #d2a8ff }
+  .ed.light { background: #fff; color: #24292f; box-shadow: 0 40px 80px -40px #0005, 0 0 0 1px #0000001a; } .ed.light .bar { background: #f6f8fa; border-bottom: 1px solid #d0d7de; } .ed.light .tab { background: #fff; box-shadow: 0 0 0 1px #d0d7de; } .ed.light .dots i:nth-child(1) { background: #ff5f57 } .ed.light .dots i:nth-child(2) { background: #febc2e } .ed.light .dots i:nth-child(3) { background: #28c840 }
+  .ed.light .k { color: #cf222e } .ed.light .s { color: #0a3069 } .ed.light .n { color: #0550ae } .ed.light .c { color: #6e7781 } .ed.light .f { color: #8250df }
+  .cur { display: inline-block; width: 9px; height: 18px; background: currentColor; vertical-align: -3px; animation: blink 1s steps(1) infinite; } @keyframes blink { 50% { opacity: 0 } }
+  @media (max-width: 760px) { .ed pre { font-size: 11.5px; padding: 16px; } }
+
+  /* S1 Apple light (P2) */
+  #s1 { background: #fbfbfd; color: #1d1d1f; display: grid; place-items: center; text-align: center; padding: 80px 20px 0; }
+  #s1 .in { margin-top: -20vh; } #s1 img { width: clamp(140px, 16vw, 200px); aspect-ratio: 1; object-fit: cover; border-radius: 34%; box-shadow: 0 30px 60px -30px #0006; }
+  #s1 h1 { font-size: clamp(44px, 7vw, 88px); font-weight: 600; letter-spacing: -.04em; line-height: 1; margin-top: 24px; }
+  #s1 p { font-size: clamp(19px, 1.9vw, 25px); color: #6e6e73; font-weight: 500; margin-top: 10px; }
+  #s1 .row { display: flex; gap: 26px; justify-content: center; align-items: center; margin-top: 22px; color: #0066cc; } #s1 .pill { background: #0071e3; color: #fff; }
+
+  /* S2 avatar + network (P5) and S4 avatar + wave share this */
+  .avc { background: radial-gradient(1000px 700px at 50% 35%, #13203f, #070b16); color: #e7ecf6; display: grid; place-items: center; text-align: center; }
+  .avc .in { pointer-events: none; padding: 0 20px; } .avc .in a { pointer-events: auto; }
+  .avc h1 { font-size: clamp(40px, 5.6vw, 72px); font-weight: 700; letter-spacing: -.035em; margin-top: 24px; line-height: 1; }
+  .avc p { color: #a5b0c8; font-size: 20px; margin-top: 10px; } .avc .ring { margin: 0 auto; }
+  .avc .btns { justify-content: center; margin-top: 24px; } .avc .b { background: #ffffff12; border: 1px solid #ffffff1f; } .avc .b:first-child { background: #e7ecf6; color: #0b1224; }
+  #s4 .in { margin-top: -22vh; }
+
+  /* S3 editor (P11) */
+  #s3 { background: #0d1117; display: grid; place-items: center; padding: 60px 20px; }
+  #s3 .ed { width: min(920px, 100%); } #s3 .body { display: grid; grid-template-columns: minmax(0, 1fr) 240px; }
+  #s3 .card { border-left: 1px solid #30363d; padding: 24px; color: #c9d1d9; } #s3 .card img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; }
+  #s3 .card b { display: block; color: #f0f6fc; font-size: 20px; margin-top: 14px; } #s3 .card span { font-size: 14px; color: #8b949e; display: block; }
+  #s3 .card a { display: block; margin-top: 14px; text-align: center; padding: 8px; border-radius: 8px; background: #238636; color: #fff; font-weight: 500; font-size: 14px; }
+  @media (max-width: 760px) { #s3 .body { grid-template-columns: 1fr; } #s3 .card { border-left: 0; border-top: 1px solid #30363d; display: grid; grid-template-columns: 80px 1fr; gap: 0 14px; align-items: center; } #s3 .card b { margin: 0; } #s3 .card a { grid-column: 1 / -1; } }
+
+  /* S5 Apple light + light editor */
+  #s5 { background: #fbfbfd; color: #1d1d1f; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 4vw; align-items: center; padding: 0 6vw 16vh; }
+  #s5 .who img { width: 96px; height: 96px; border-radius: 30%; object-fit: cover; box-shadow: 0 20px 40px -20px #0006; }
+  #s5 h1 { font-size: clamp(44px, 5.4vw, 80px); font-weight: 600; letter-spacing: -.045em; line-height: 1; margin-top: 22px; }
+  #s5 p { font-size: 21px; color: #6e6e73; font-weight: 500; margin-top: 12px; max-width: 20em; }
+  #s5 .btns { margin-top: 24px; align-items: center; } #s5 .pill { background: #0071e3; color: #fff; } #s5 .btns a:last-child { color: #0066cc; }
+  @media (max-width: 900px) { #s5 { grid-template-columns: 1fr; padding: 80px 20px 30vh; } }
+
+  /* S6 dark editor under a spotlight, wave below */
+  #s6 { background: #000; color: #f5f5f7; display: flex; flex-direction: column; align-items: center; padding: 8vh 20px 0; }
+  #s6 .beam { position: absolute; z-index: 0; left: 50%; top: -10%; width: min(1200px, 150vw); height: 120%; transform: translateX(-50%); background: radial-gradient(closest-side at 50% 0%, #ffffff2a, #ffffff0c 55%, transparent); }
+  #s6 .head { display: flex; align-items: center; gap: 16px; } #s6 .head h1 { font-size: clamp(32px, 4vw, 52px); font-weight: 600; letter-spacing: -.035em; }
+  #s6 .head p { color: #a1a1a6; } #s6 .ed { width: min(760px, 100%); margin-top: 4vh; } #s6 .ed.dark { background: #0e1117ee; backdrop-filter: blur(12px); }
+
+  /* S7 interactive IDE with a plot panel */
+  #s7 { background: #1e1e1e; color: #d4d4d4; display: grid; grid-template-rows: 34px minmax(0, 1fr) minmax(170px, 30vh) 24px; grid-template-columns: 220px minmax(0, 1fr); height: 100svh; min-height: 620px; font: 13px "Geist Mono", monospace; }
+  #s7 .title { grid-column: 1 / -1; background: #323233; display: flex; align-items: center; justify-content: center; position: relative; color: #ccc; font: 13px "Inter Tight"; }
+  #s7 .title .dots { position: absolute; left: 12px; } #s7 .title .dots i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 6px; } #s7 .title .dots i:nth-child(1) { background: #ff5f57 } #s7 .title .dots i:nth-child(2) { background: #febc2e } #s7 .title .dots i:nth-child(3) { background: #28c840 }
+  #s7 .tree { grid-row: 2 / 4; background: #252526; padding: 10px 0; overflow: auto; } #s7 .tree small { display: block; padding: 4px 14px 8px; color: #8a8a8a; font-size: 11px; letter-spacing: .04em; }
+  #s7 .tree .me { display: flex; align-items: center; gap: 10px; padding: 4px 14px 14px; font: 600 14px "Inter Tight"; color: #fff; } #s7 .tree .me img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; } #s7 .tree .me span { display: block; font: 400 12px "Inter Tight"; color: #9a9a9a; }
+  #s7 .tree button { all: unset; display: block; width: 100%; box-sizing: border-box; padding: 4px 14px 4px 24px; cursor: pointer; color: #cccccc; } #s7 .tree button:hover { background: #2a2d2e; } #s7 .tree button.on { background: #37373d; color: #fff; }
+  #s7 .tree button::before { content: attr(data-ic); display: inline-block; width: 22px; color: var(--ic); }
+  #s7 .main { display: grid; grid-template-rows: 35px minmax(0, 1fr); min-height: 0; }
+  #s7 .tabs { background: #252526; display: flex; } #s7 .tabs span { padding: 9px 16px; background: #1e1e1e; color: #fff; border-top: 1px solid #0078d4; }
+  #s7 pre { padding: 16px 0; overflow: auto; font: 14px/1.7 "Geist Mono", monospace; counter-reset: ln; }
+  #s7 pre .l { display: block; padding-left: 64px; position: relative; white-space: pre; } #s7 pre .l::before { counter-increment: ln; content: counter(ln); position: absolute; left: 0; width: 44px; text-align: right; color: #6e7681; }
+  #s7 .k { color: #c586c0 } #s7 .s { color: #ce9178 } #s7 .n { color: #b5cea8 } #s7 .c { color: #6a9955 } #s7 .f { color: #dcdcaa } #s7 .t { color: #4ec9b0 } #s7 .h { color: #569cd6; font-weight: 600 } #s7 .p { color: #9cdcfe }
+  #s7 .panel { grid-column: 2; position: relative; border-top: 1px solid #333; background: #181818; } #s7 .panel .ph { position: absolute; z-index: 2; left: 14px; top: 8px; color: #8a8a8a; font-size: 11px; display: flex; gap: 18px; } #s7 .panel .ph b { color: #e7e7e7; font-weight: 500; border-bottom: 1px solid #e7e7e7; }
+  #s7 .panel canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #s7 .status { grid-column: 1 / -1; background: #0078d4; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font: 12px "Inter Tight"; } #s7 .status a { color: #fff; }
+  @media (max-width: 760px) { #s7 { grid-template-columns: 1fr; grid-template-rows: 34px auto minmax(0, 1fr) 160px 24px; } #s7 .tree { grid-row: 2; display: flex; overflow-x: auto; padding: 6px; } #s7 .tree small, #s7 .tree .me span { display: none; } #s7 .tree button { width: auto; white-space: nowrap; padding: 4px 10px; } #s7 .main { grid-row: 3; } #s7 .panel { grid-column: 1; grid-row: 4; } #s7 pre { font-size: 12px; } #s7 pre .l { padding-left: 40px; } #s7 pre .l::before { width: 28px; } }
+
+  /* S8 notebook */
+  #s8 { background: #f7f7f8; color: #1d1d1f; display: flex; justify-content: center; padding: 70px 20px; }
+  #s8 .nb { width: min(900px, 100%); } #s8 header { display: flex; align-items: center; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid #e2e2e6; }
+  #s8 header img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; } #s8 header b { font-size: 24px; letter-spacing: -.03em; display: block; } #s8 header span { color: #6e6e73; }
+  #s8 header a { margin-left: auto; white-space: nowrap; background: #1d1d1f; color: #fff; } #s8 .cell { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; margin-top: 16px; }
+  #s8 .cell > small { font: 13px/2.3 "Geist Mono"; color: #8a8a93; text-align: right; } #s8 .cell.out > small { color: #c2410c; }
+  #s8 .code { background: #fff; border: 1px solid #e2e2e6; border-radius: 10px; padding: 10px 14px; font: 14px/1.7 "Geist Mono"; white-space: pre-wrap; }
+  #s8 .code .k { color: #cf222e } #s8 .code .s { color: #0a3069 } #s8 .code .f { color: #8250df }
+  #s8 .res { padding: 8px 2px; font-size: 18px; } #s8 .plot { position: relative; height: 240px; border-radius: 12px; background: #0b0d12; overflow: hidden; } #s8 .plot canvas { position: absolute; inset: 0; width: 100%; height: 100%; } #s8 .plot span { position: absolute; z-index: 2; left: 14px; top: 10px; font: 12px "Geist Mono"; color: #8a8f99; }
+
+  /* S9 terminal typing beside the avatar */
+  #s9 { background: #07090d; color: #d6dde8; display: grid; place-items: center; padding: 60px 20px 34vh; }
+  #s9 .wrap { display: flex; gap: 34px; align-items: flex-start; width: min(860px, 100%); }
+  #s9 .term { flex: 1; font: 16px/1.8 "Geist Mono", monospace; min-height: 280px; } #s9 .term .p { color: #7ee2a8 } #s9 .term .o { color: #9aa6b8 } #s9 .term a { color: #7aa2ff; }
+  @media (max-width: 760px) { #s9 .wrap { flex-direction: column; } #s9 .term { font-size: 13px; } }
+
+  /* S10 profile card floating on a light wave */
+  #s10 { background: #f2f4f7; display: grid; place-items: center; padding: 60px 20px 26vh; }
+  #s10 .card { width: min(460px, 100%); background: #ffffffe8; backdrop-filter: blur(14px); border-radius: 26px; padding: 30px; box-shadow: 0 40px 80px -40px #0004, 0 0 0 1px #0000000d; color: #17181c; }
+  #s10 .top { display: flex; gap: 18px; align-items: center; } #s10 .top b { font-size: 26px; letter-spacing: -.03em; display: block; line-height: 1.1; } #s10 .top span { color: #6b7079; }
+  #s10 .now { margin-top: 20px; padding: 12px 14px; border-radius: 14px; background: #f2f4f7; display: flex; gap: 10px; align-items: center; font-size: 15px; } #s10 .now i { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 4px #22c55e30; flex: none; }
+  #s10 dl { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; margin-top: 18px; font-size: 15px; } #s10 dt { color: #6b7079; }
+  #s10 .btns { margin-top: 22px; } #s10 .b { background: #f2f4f7; } #s10 .b:first-child { background: #17181c; color: #fff; }
+
+  /* S11, S12 full-body figure on the wave */
+  .fb { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
+  .fb .tx { padding: 0 2vw 12vh 9vw; } .fb h1 { font-size: clamp(44px, 5.6vw, 84px); font-weight: 600; letter-spacing: -.045em; line-height: 1; } .fb p { font-size: 21px; margin-top: 14px; max-width: 21em; font-weight: 500; }
+  .fb .fig { position: absolute; z-index: 1; bottom: 14vh; right: 12vw; height: 74vh; } .fb .fig img { height: 100%; display: block; }
+  .fb .fig::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: -14px; height: 28px; border-radius: 50%; background: radial-gradient(closest-side, #0006, transparent); z-index: -1; }
+  .fb .note { position: absolute; z-index: 3; right: 12vw; bottom: 9vh; font: 12px "Geist Mono"; opacity: .6; }
+  #s11 { background: #fbfbfd; color: #1d1d1f; } #s11 p { color: #6e6e73; } #s11 .pill { background: #0071e3; color: #fff; display: inline-block; margin-top: 24px; }
+  #s12 { background: #000; color: #f5f5f7; grid-template-columns: 1fr; text-align: center; align-items: start; }
+  #s12 .tx { padding: 9vh 20px 0; position: relative; z-index: 3; } #s12 p { color: #a1a1a6; margin-inline: auto; } #s12 .fig { right: 50%; transform: translateX(50%); height: 62vh; bottom: 12vh; }
+  #s12 .beam { position: absolute; z-index: 0; left: 50%; top: 0; width: min(900px, 120vw); height: 100%; transform: translateX(-50%); background: conic-gradient(from 180deg at 50% 0%, transparent 165deg, #ffffff1a 175deg, #ffffff30 180deg, #ffffff1a 185deg, transparent 195deg); }
+  #s12 .fig::after { background: radial-gradient(closest-side, #ffffff26, transparent); }
+  #s12 .note { right: 50%; transform: translateX(50%); bottom: 6vh; }
+  @media (max-width: 860px) { .fb { grid-template-columns: 1fr; align-items: start; } .fb .tx { padding: 90px 20px 0; } .fb .fig, #s12 .fig { height: 50vh; right: 50%; transform: translateX(50%); bottom: 10vh; } .fb .note { right: 50%; transform: translateX(50%); } }
+
+  /* S13, S14 top-down desk */
+  .desk { display: grid; grid-template-columns: minmax(0, 1fr); place-items: center; padding: 70px 2vw 40px; }
+  .desk .intro { position: absolute; z-index: 3; left: 4vw; top: 22px; }
+  .desk .intro b { font-size: 20px; letter-spacing: -.02em; } .desk .intro span { margin-left: 12px; opacity: .65; }
+  .scene { position: relative; width: min(1300px, 96vw); aspect-ratio: 16 / 9; container-type: inline-size; border-radius: 3cqw; }
+  .scene > * { position: absolute; transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .35s; }
+  .scene .it:hover { transform: var(--rot) translateY(-.6cqw) scale(1.03); z-index: 10; }
+  .scene .it { transform: var(--rot); cursor: pointer; }
+  /* laptop opened flat: screen above keyboard */
+  .lap { left: 27cqw; top: 6cqw; width: 46cqw; --rot: rotate(0deg); }
+  .lap .scr { height: 25cqw; border-radius: 1.4cqw 1.4cqw .3cqw .3cqw; background: #111; padding: .9cqw; box-shadow: 0 .4cqw 1.6cqw #0006; }
+  .lap .scr .in { height: 100%; border-radius: .5cqw; background: #0d1117; overflow: hidden; font: 1.05cqw/1.65 "Geist Mono", monospace; color: #c9d1d9; padding: 1.4cqw 1.8cqw; white-space: pre; }
+  .lap .scr .in .k { color: #ff7b72 } .lap .scr .in .s { color: #a5d6ff } .lap .scr .in .f { color: #d2a8ff } .lap .scr .in .c { color: #8b949e }
+  .lap .kb { height: 17cqw; margin-top: .25cqw; border-radius: .3cqw .3cqw 1.6cqw 1.6cqw; background: linear-gradient(#d7dae0, #b9bdc6); padding: 1.6cqw 3cqw 0; box-shadow: 0 .6cqw 1.8cqw #0005; }
+  .lap .keys { height: 8.6cqw; border-radius: .5cqw; background-color: #24262b; background-image: repeating-linear-gradient(90deg, transparent 0 2.3cqw, #c3c7cf 2.3cqw 2.55cqw), repeating-linear-gradient(transparent 0 1.45cqw, #c3c7cf 1.45cqw 1.72cqw); box-shadow: 0 0 0 .25cqw #c3c7cf; }
+  .lap .pad { width: 15cqw; height: 5.4cqw; margin: 1cqw auto 0; border-radius: .7cqw; background: #c9ccd3; box-shadow: inset 0 0 0 1px #0000001a; }
+  .mug { left: 79cqw; top: 9cqw; width: 9cqw; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 50% 50%, #3b2416 0 52%, #5a3a24 53% 58%, #f3f3f1 59%); box-shadow: 0 .6cqw 1.4cqw #0005; --rot: rotate(0deg); }
+  .mug::after { content: ""; position: absolute; right: -2.2cqw; top: 3cqw; width: 2.8cqw; height: 3cqw; border: .9cqw solid #f3f3f1; border-left: 0; border-radius: 0 1.6cqw 1.6cqw 0; }
+  .book { left: 5cqw; top: 8cqw; width: 18cqw; height: 25cqw; --rot: rotate(-7deg); background: #fbfaf6 repeating-linear-gradient(transparent 0 2.05cqw, #c9d6ee 2.05cqw 2.15cqw); border-radius: .5cqw 1cqw 1cqw .5cqw; box-shadow: 0 .6cqw 1.6cqw #0004, inset 1.6cqw 0 0 #e9e4d8; padding: 2.4cqw 1.4cqw 0 3cqw; font: 700 1.9cqw/1.08 Caveat, cursive; color: #1f3a7a; }
+  .book p { margin-bottom: 1cqw; } .book small { display: block; font-size: 1.5cqw; color: #4b5d8a; font-weight: 500; }
+  .pol { left: 8cqw; top: 35cqw; width: 14cqw; --rot: rotate(5deg); background: #fff; padding: .8cqw .8cqw 3cqw; box-shadow: 0 .8cqw 2cqw #0005; } .pol img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; } .pol span { position: absolute; left: 0; right: 0; bottom: .6cqw; text-align: center; font: 700 1.7cqw Caveat; color: #333; }
+  .phone { left: 80cqw; top: 25cqw; width: 9.5cqw; height: 19cqw; --rot: rotate(9deg); border-radius: 1.6cqw; background: #111; padding: .5cqw; box-shadow: 0 .8cqw 2cqw #0006; }
+  .phone div { height: 100%; border-radius: 1.2cqw; background: linear-gradient(160deg, #2350ff, #6d8bff); color: #fff; display: flex; flex-direction: column; justify-content: flex-end; padding: 1cqw; font: 600 1.1cqw "Inter Tight"; } .phone b { font-size: 1.6cqw; letter-spacing: -.02em; }
+  .sticky { width: 9cqw; height: 9cqw; padding: 1cqw; font: 700 2.2cqw/1 Caveat; color: #2a2a2a; box-shadow: 0 .6cqw 1.2cqw #0003; display: flex; align-items: flex-end; }
+  .st1 { left: 29cqw; top: 44.5cqw; background: #fde68a; --rot: rotate(-4deg); } .st2 { left: 40cqw; top: 45cqw; background: #bbf7d0; --rot: rotate(3deg); } .st3 { left: 51cqw; top: 44cqw; background: #bfdbfe; --rot: rotate(-2deg); }
+  .pen { left: 64cqw; top: 46cqw; width: 14cqw; height: .9cqw; border-radius: 1cqw; background: linear-gradient(90deg, #111 0 85%, #c9a227 85% 88%, #111 88%); --rot: rotate(-24deg); box-shadow: 0 .3cqw .6cqw #0004; }
+  #s13 { background: #2a2c30; color: #f0f0f0; } #s13 .scene { background: #34363b; box-shadow: inset 0 0 0 1px #ffffff10; }
+  #s13 .scene::before { content: ""; position: absolute; left: 25cqw; top: 3cqw; width: 52cqw; height: 50cqw; border-radius: 1.6cqw; background: #1d1f23; }
+  #s14 { background: #eceef1; color: #1d1d1f; } #s14 .scene { background: #fbfbfd; box-shadow: 0 40px 80px -50px #0004, inset 0 0 0 1px #0000000a; }
+  #s14 .lap .scr .in { background: #fff; color: #24292f; } #s14 .lap .scr .in .k { color: #cf222e } #s14 .lap .scr .in .s { color: #0a3069 } #s14 .lap .scr .in .f { color: #8250df } #s14 .lap .scr .in .c { color: #6e7781 }
+  @media (max-width: 760px) { .desk .intro span { display: block; margin: 0; } .desk { padding-top: 90px; place-items: start; } .scene { width: 165vw; left: 50%; transform: translateX(-50%); } }
+</style>
+</head>
+<body>
+<nav class="toc" aria-label="Variants"></nav>
+
+<section class="v" id="s1" data-name="Apple light (was P2)">
+  <canvas class="wave"></canvas>
+  <div class="in z"><img src="../img/me.jpg" alt="Andy Seymour"><h1>Andy Seymour</h1><p>Software engineer. Trading strategies in C++ and Python.</p><div class="row"><a class="pill" href="#">Get in touch</a><a href="#">See experience</a></div></div>
+</section>
+
+<section class="v avc" id="s2" data-name="Avatar and network (was P5)">
+  <canvas class="net"></canvas>
+  <div class="in z"><div class="ring"><img src="../img/me.jpg" alt="Andy Seymour"></div><h1>Andy Seymour</h1><p>Software engineer at Gambit Research, London</p><div class="btns"><a class="b" href="#">Email me</a><a class="b" href="#">GitHub</a><a class="b" href="#">LinkedIn</a><a class="b" href="#">CV</a></div></div>
+</section>
+
+<section class="v" id="s3" data-name="Editor (was P11)">
+  <div class="ed dark z"><div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="tab"><img src="../img/me.jpg" alt="">andy.py</span></div>
+    <div class="body"><pre class="code-andy"></pre><div class="card"><img src="../img/me.jpg" alt="Andy Seymour"><div><b>Andy Seymour</b><span>Software engineer</span></div><a href="#">Email me</a></div></div></div>
+</section>
+
+<section class="v avc" id="s4" data-name="Avatar on the wave">
+  <canvas class="wave"></canvas>
+  <div class="in z"><div class="ring"><img src="../img/me.jpg" alt="Andy Seymour"></div><h1>Andy Seymour</h1><p>Software engineer at Gambit Research, London</p><div class="btns"><a class="b" href="#">Email me</a><a class="b" href="#">GitHub</a><a class="b" href="#">LinkedIn</a><a class="b" href="#">CV</a></div></div>
+</section>
+
+<section class="v" id="s5" data-name="Apple light with editor">
+  <canvas class="wave"></canvas>
+  <div class="who z"><img src="../img/me.jpg" alt="Andy Seymour"><h1>Andy Seymour</h1><p>Software engineer in London. I write trading strategies in C++ and Python.</p><div class="btns"><a class="pill" href="#">Get in touch</a><a href="#">See experience</a></div></div>
+  <div class="ed light z"><div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="tab"><img src="../img/me.jpg" alt="">andy.py</span></div><pre class="code-andy"></pre></div>
+</section>
+
+<section class="v" id="s6" data-name="Editor under a spotlight, wave below">
+  <div class="beam"></div><canvas class="wave"></canvas>
+  <div class="head z"><div class="ring" style="--s:72px;--rb:#000"><img src="../img/me.jpg" alt="Andy Seymour"></div><div style="text-align:left"><h1>Andy Seymour</h1><p>Software engineer, London</p></div></div>
+  <div class="ed dark z"><div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="tab">andy.py</span></div><pre class="code-andy typed"></pre></div>
+</section>
+
+<section class="v" id="s7" data-name="Working IDE with a plot panel">
+  <div class="title"><span class="dots"><i></i><i></i><i></i></span>andyseymour.dev</div>
+  <aside class="tree"><div class="me"><img src="../img/me.jpg" alt="Andy Seymour"><div>Andy Seymour<span>Software engineer</span></div></div><small>EXPLORER</small></aside>
+  <div class="main"><div class="tabs"><span id="tabname">about.md</span></div><pre id="ide"></pre></div>
+  <div class="panel"><div class="ph"><b>PLOT</b><span>TERMINAL</span><span>move the cursor over the surface</span></div><canvas class="wave"></canvas></div>
+  <div class="status"><span>main</span><span><a href="#">aseymour917@gmail.com</a></span></div>
+</section>
+
+<section class="v" id="s8" data-name="Notebook">
+  <div class="nb">
+    <header><img src="../img/me.jpg" alt="Andy Seymour"><div><b>andy_seymour.ipynb</b><span>Software engineer, London</span></div><a class="b" href="#">Email me</a></header>
+    <div class="cell"><small>In [1]:</small><div class="code"><span class="k">from</span> career <span class="k">import</span> Andy
+me = Andy()</div></div>
+    <div class="cell"><small>In [2]:</small><div class="code">me.<span class="f">summary</span>()</div></div>
+    <div class="cell out"><small>Out[2]:</small><div class="res">Software engineer at Gambit Research, writing trading strategies in C++ and Python. Previously IBM and BAE Systems. MSc Mathematics, first class.</div></div>
+    <div class="cell"><small>In [3]:</small><div class="code">me.<span class="f">plot</span>(<span class="s">"surface"</span>)</div></div>
+    <div class="cell out"><small>Out[3]:</small><div class="plot"><span>move the cursor over the surface, click for a ripple</span><canvas class="wave"></canvas></div></div>
+  </div>
+</section>
+
+<section class="v" id="s9" data-name="Terminal beside the avatar">
+  <canvas class="wave"></canvas>
+  <div class="wrap z"><div class="ring" style="--s:120px;--rb:#07090d"><img src="../img/me.jpg" alt="Andy Seymour"></div><div class="term" id="term"></div></div>
+</section>
+
+<section class="v" id="s10" data-name="Profile card on a light wave">
+  <canvas class="wave"></canvas>
+  <div class="card z">
+    <div class="top"><div class="ring" style="--s:84px;--rb:#fff;--r1:#2350ff;--r2:#7dd3fc"><img src="../img/me.jpg" alt="Andy Seymour"></div><div><b>Andy Seymour</b><span>Software engineer, London</span></div></div>
+    <div class="now"><i></i>Writing trading strategies in C++ and Python at Gambit Research</div>
+    <dl><dt>Before</dt><dd>IBM, BAE Systems</dd><dt>Education</dt><dd>MSc Mathematics, first class</dd><dt>Side projects</dt><dd>FPL Outlook, What's Live, TOPIK Trainer</dd></dl>
+    <div class="btns"><a class="b" href="#">Email me</a><a class="b" href="#">LinkedIn</a><a class="b" href="#">GitHub</a><a class="b" href="#">CV</a></div>
+  </div>
+</section>
+
+<section class="v fb" id="s11" data-name="Full-body photo on the wave, light">
+  <canvas class="wave"></canvas>
+  <div class="tx z"><h1>Andy Seymour</h1><p>Software engineer in London. I write trading strategies in C++ and Python at Gambit Research.</p><a class="pill" href="#">Get in touch</a></div>
+  <div class="fig"><img src="../img/body-light.png" alt="Placeholder for a full-body photo"></div>
+  <span class="note">placeholder: your full-body cut-out goes here</span>
+</section>
+
+<section class="v fb" id="s12" data-name="Full-body photo, spotlight launch">
+  <div class="beam"></div><canvas class="wave"></canvas>
+  <div class="tx"><h1>Andy Seymour</h1><p>Software engineer. Trading strategies in C++ and Python.</p></div>
+  <div class="fig"><img src="../img/body-light.png" style="filter:brightness(.42)" alt="Placeholder for a full-body photo"></div>
+  <span class="note">placeholder: your full-body cut-out goes here</span>
+</section>
+
+<section class="v desk" id="s13" data-name="Top-down desk, dark">
+  <div class="intro"><b>Andy Seymour</b><span>Software engineer, London. Hover the desk.</span></div>
+</section>
+
+<section class="v desk" id="s14" data-name="Top-down desk, light">
+  <div class="intro"><b>Andy Seymour</b><span>Software engineer, London. Hover the desk.</span></div>
+</section>
+
+<script src="fx.js"></script>
+<script src="wave2.js"></script>
+<script>
+const $ = (s, r = document) => r.querySelector(s)
+const toc = $('.toc')
+document.querySelectorAll('.v').forEach((s, i) => {
+  s.prepend(Object.assign(document.createElement('span'), { className: 'tag', textContent: `S${i + 1} ${s.dataset.name}` }))
+  toc.append(Object.assign(document.createElement('a'), { href: '#' + s.id, textContent: 'S' + (i + 1), title: s.dataset.name }))
+})
+
+/* the code shown in the editors */
+const CODE = `<span class="k">class</span> <span class="f">Andy</span>(<span class="f">Engineer</span>):
+    name     = <span class="s">"Andy Seymour"</span>
+    based_in = <span class="s">"London"</span>
+    now      = <span class="s">"Strategy development, Gambit Research"</span>
+    writes   = [<span class="s">"C++"</span>, <span class="s">"Python"</span>]
+
+    <span class="k">def</span> <span class="f">history</span>(<span class="n">self</span>):
+        <span class="k">return</span> [
+            (<span class="n">2019</span>, <span class="s">"Gambit: data lead, tools, strategies"</span>),
+            (<span class="n">2015</span>, <span class="s">"IBM: MQ, App Connect, cloud"</span>),
+            (<span class="n">2014</span>, <span class="s">"BAE Systems: Typhoon, F-35"</span>),
+        ]
+
+<span class="c"># contact: andy.email()</span> <span class="cur"></span>`
+document.querySelectorAll('.code-andy:not(.typed)').forEach(p => p.innerHTML = CODE)
+
+// S6: type the code out once when it scrolls into view
+const typed = $('#s6 .typed')
+new IntersectionObserver(([e], o) => {
+  if (!e.isIntersecting) return; o.disconnect()
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return typed.innerHTML = CODE
+  const tmp = document.createElement('div'); tmp.innerHTML = CODE; const total = tmp.textContent.length; let n = 0
+  const cut = k => { const w = document.createElement('div'); w.innerHTML = CODE; let left = k; const walk = node => { for (const c of [...node.childNodes]) { if (left <= 0) { c.remove(); continue } if (c.nodeType === 3) { if (c.textContent.length > left) c.textContent = c.textContent.slice(0, left); left -= c.textContent.length } else walk(c) } }; walk(w); return w.innerHTML + '<span class="cur"></span>' }
+  const iv = setInterval(() => { n = Math.min(total, n + 3); typed.innerHTML = cut(n); if (n >= total) { clearInterval(iv); typed.innerHTML = CODE } }, 16)
+}, { threshold: .4 }).observe(typed)
+
+/* S7: the IDE switches files */
+const FILES = {
+  'about.md': { ic: 'M', c: '#519aba', body: `<span class="h"># Andy Seymour</span>
+
+Software engineer in London. I write trading strategies in
+<span class="p">C++</span> and <span class="p">Python</span> at Gambit Research.
+
+<span class="h">## Before</span>
+- Four years at IBM: MQ, App Connect, Cloud Integration Platform
+- Safety-critical software for the Typhoon and F-35 at BAE Systems
+
+<span class="h">## Education</span>
+- MSc Mathematics, first class, University of Leicester` },
+  'experience.py': { ic: 'py', c: '#3572A5', body: `<span class="t">Role</span> = <span class="f">namedtuple</span>(<span class="s">"Role"</span>, <span class="s">"company title years"</span>)
+
+experience = [
+    <span class="t">Role</span>(<span class="s">"Gambit Research"</span>, <span class="s">"Strategy Development"</span>, <span class="s">"now"</span>),
+    <span class="t">Role</span>(<span class="s">"Gambit Research"</span>, <span class="s">"Tools"</span>, <span class="s">""</span>),
+    <span class="t">Role</span>(<span class="s">"Gambit Research"</span>, <span class="s">"Data Team Lead"</span>, <span class="s">"2019"</span>),
+    <span class="t">Role</span>(<span class="s">"IBM"</span>, <span class="s">"Frontend Developer, Cloud Integration"</span>, <span class="s">"2015-2019"</span>),
+    <span class="t">Role</span>(<span class="s">"IBM"</span>, <span class="s">"Full Stack Developer, App Connect"</span>, <span class="s">""</span>),
+    <span class="t">Role</span>(<span class="s">"IBM"</span>, <span class="s">"Software Developer, MQ"</span>, <span class="s">""</span>),
+    <span class="t">Role</span>(<span class="s">"BAE Systems"</span>, <span class="s">"Software Engineer"</span>, <span class="s">"2014-2015"</span>),
+]` },
+  'skills.json': { ic: '{}', c: '#cbcb41', body: `{
+  <span class="p">"trading"</span>: [<span class="s">"C++"</span>, <span class="s">"Python"</span>],
+  <span class="p">"data"</span>: [<span class="s">"Spark"</span>, <span class="s">"Hadoop / HDFS"</span>, <span class="s">"Kafka"</span>, <span class="s">"pandas"</span>, <span class="s">"SQL"</span>],
+  <span class="p">"web"</span>: [<span class="s">"React"</span>, <span class="s">"TypeScript"</span>, <span class="s">"Node"</span>, <span class="s">"Next.js"</span>],
+  <span class="p">"infra"</span>: [<span class="s">"AWS"</span>, <span class="s">"Cloudflare Workers"</span>, <span class="s">"Docker"</span>, <span class="s">"Kubernetes"</span>]
+}` },
+  'projects/': { ic: '▸', c: '#c5c5c5', body: `<span class="c"># Built and run outside work</span>
+
+<span class="f">fploutlook.com</span>    Fantasy Premier League planner
+<span class="f">whatslive.guide</span>   Every live sport on UK TV in one calendar
+<span class="f">topiktrainer.com</span>  Korean reading exam practice` },
+  'contact.sh': { ic: '$', c: '#89e051', body: `<span class="c">#!/bin/sh</span>
+<span class="f">open</span> <span class="s">"mailto:aseymour917@gmail.com"</span>
+<span class="f">open</span> <span class="s">"https://www.linkedin.com/in/andy-seymour-86a24ab1/"</span>
+<span class="f">open</span> <span class="s">"https://github.com/AndySeymour2904"</span>` },
+}
+const tree = $('#s7 .tree'), ide = $('#ide')
+const show = name => { ide.innerHTML = FILES[name].body.split('\n').map(l => `<span class="l">${l || ' '}</span>`).join(''); $('#tabname').textContent = name; tree.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.f === name)) }
+Object.entries(FILES).forEach(([name, f]) => { const b = document.createElement('button'); b.dataset.f = name; b.dataset.ic = f.ic; b.style.setProperty('--ic', f.c); b.textContent = name; b.onclick = () => show(name); tree.append(b) })
+show('about.md')
+
+/* S9: terminal that types a short session */
+const term = $('#term'), lines = [['whoami', 'Andy Seymour, software engineer in London'], ['cat now.txt', 'Trading strategies in C++ and Python at Gambit Research'], ['ls past/', 'ibm/  bae-systems/  msc-mathematics/'], ['contact', '<a href="#">aseymour917@gmail.com</a>']]
+new IntersectionObserver(([e], o) => {
+  if (!e.isIntersecting) return; o.disconnect(); let i = 0
+  const next = () => { if (i >= lines.length) { term.insertAdjacentHTML('beforeend', '<div><span class="p">$</span> <span class="cur"></span></div>'); return }
+    const [cmd, out] = lines[i++], row = document.createElement('div'); row.innerHTML = '<span class="p">$</span> '; term.append(row); let k = 0
+    const iv = setInterval(() => { row.innerHTML = '<span class="p">$</span> ' + cmd.slice(0, ++k); if (k >= cmd.length) { clearInterval(iv); setTimeout(() => { term.insertAdjacentHTML('beforeend', `<div class="o">${out}</div>`); setTimeout(next, 350) }, 200) } }, 45) }
+  next()
+}, { threshold: .4 }).observe(term)
+
+/* S13, S14: the desk */
+const DESK = `
+  <div class="lap it" title="Experience"><div class="scr"><div class="in"><span class="k">class</span> <span class="f">Andy</span>(<span class="f">Engineer</span>):
+    now    = <span class="s">"Strategy development, Gambit"</span>
+    writes = [<span class="s">"C++"</span>, <span class="s">"Python"</span>]
+
+    <span class="k">def</span> <span class="f">history</span>(self):
+        <span class="k">return</span> [<span class="s">"Gambit"</span>, <span class="s">"IBM"</span>, <span class="s">"BAE Systems"</span>]
+
+<span class="c"># click the sticky notes below</span></div></div><div class="kb"><div class="keys"></div><div class="pad"></div></div></div>
+  <div class="book it" title="About"><p>Andy Seymour<small>software engineer, London</small></p><p>Gambit Research<small>data lead, tools, now strategies</small></p><p>IBM, BAE Systems<small>2014 to 2019</small></p><p>MSc Maths<small>first class</small></p></div>
+  <div class="pol it" title="Me"><img src="../img/me.jpg" alt="Andy Seymour"><span>London</span></div>
+  <div class="mug it" title="Coffee"></div>
+  <a class="phone it" href="#" title="Contact"><div><span>Get in touch</span><b>Email me</b></div></a>
+  <a class="sticky st1 it" href="#">Experience</a><a class="sticky st2 it" href="#">Projects</a><a class="sticky st3 it" href="#">CV</a>
+  <div class="pen it"></div>`
+document.querySelectorAll('.desk').forEach(d => { const s = document.createElement('div'); s.className = 'scene z'; s.innerHTML = DESK; d.append(s) })
+
+/* waves */
+Wave2($('#s1 .wave'), { dot: [29, 29, 31], glow: [0, 113, 227], line: '#0071e3', horizon: .66, spot: .7, alpha: .8 })
+FX.network($('#s2 .net'), { color: '#c9d6f2', acc: '#7aa2ff' })
+Wave2($('#s4 .wave'), { dot: [201, 214, 242], glow: [122, 162, 255], line: '#7aa2ff', horizon: .7, spot: .8 })
+Wave2($('#s5 .wave'), { dot: [29, 29, 31], glow: [0, 113, 227], line: '#0071e3', horizon: .76, spot: .5, alpha: .7 })
+Wave2($('#s6 .wave'), { horizon: .8 })
+Wave2($('#s7 .wave'), { host: $('#s7 .panel'), dot: [212, 212, 212], glow: [0, 120, 212], line: '#3794ff', horizon: .28, spot: .6, density: .9 })
+Wave2($('#s8 .wave'), { host: $('#s8 .plot'), horizon: .25, spot: .5, density: .8 })
+Wave2($('#s9 .wave'), { dot: [214, 221, 232], glow: [126, 226, 168], line: '#7ee2a8', horizon: .74, spot: .7 })
+Wave2($('#s10 .wave'), { dot: [40, 44, 56], glow: [35, 80, 255], line: '#2350ff', horizon: .62, spot: .6, alpha: .8 })
+Wave2($('#s11 .wave'), { dot: [29, 29, 31], glow: [0, 113, 227], line: '#0071e3', horizon: .72, spot: .55, spotX: .72, alpha: .75 })
+Wave2($('#s12 .wave'), { horizon: .78 })
+</script>
+</body>
+</html>
