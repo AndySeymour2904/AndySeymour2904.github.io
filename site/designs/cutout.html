@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cut-out heroes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font: 400 17px/1.55 "Inter Tight", system-ui, sans-serif; letter-spacing: -.01em; -webkit-font-smoothing: antialiased; background: #fff; color: #17181c; }
+  a { color: inherit; text-decoration: none; }
+  .tag { position: absolute; z-index: 50; top: 12px; left: 12px; font: 500 12px "Geist Mono", monospace; padding: 5px 9px; border-radius: 6px; background: #ffffffe6; color: #111; box-shadow: 0 0 0 1px #0002; }
+
+  /* shared hero structure: text left, colour block right, cut-out figure overlapping the block's edge */
+  .hero { --acc: #ffb22e; --page: #fbfbfc; --ink: #17181c; --sub: #555a66; position: relative; min-height: 100svh; background: var(--page); color: var(--ink); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); overflow: hidden; isolation: isolate; }
+  .hero nav { position: absolute; z-index: 5; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 26px 5vw; font-size: 15px; font-weight: 500; }
+  .hero nav b { font-size: 17px; font-weight: 700; letter-spacing: -.02em; }
+  .hero nav div { display: flex; gap: 30px; } .hero nav div a { opacity: .8; } .hero nav div a:hover { opacity: 1; }
+  .text { position: relative; z-index: 4; align-self: center; padding: 0 2vw 0 10vw; }
+  .text .hi { color: var(--sub); font-size: 20px; }
+  .text h1 { font-size: clamp(46px, 5.6vw, 84px); font-weight: 700; letter-spacing: -.045em; line-height: 1; margin-top: 6px; }
+  .text h1 span { color: var(--acc-text, var(--acc)); }
+  .text p { color: var(--sub); font-size: clamp(19px, 1.6vw, 22px); margin-top: 16px; max-width: 22em; }
+  .text .row { display: flex; gap: 14px; margin-top: 30px; flex-wrap: wrap; align-items: center; }
+  .btn { padding: 14px 26px; border-radius: 10px; font-weight: 600; font-size: 16px; background: var(--ink); color: var(--page); transition: transform .2s; } .btn:hover { transform: translateY(-2px); }
+  .btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px currentColor; }
+  .facts { display: flex; gap: 36px; margin-top: 46px; } .facts b { display: block; font-size: 30px; letter-spacing: -.04em; } .facts span { color: var(--sub); font-size: 14px; }
+  /* panel geometry is shared by the colour block and the photo, so the photo is framed by the block */
+  .block, .fig { position: absolute; top: var(--t, 0); bottom: var(--b, 0); right: var(--r, 0); width: var(--w, 40%); border-radius: var(--rad, 0); overflow: hidden; }
+  .block { z-index: 1; background: var(--acc); }
+  .block canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .fig { z-index: 3; pointer-events: none; }
+  .fig img { position: absolute; left: 50%; bottom: 0; height: 100%; max-width: none; transform: translateX(-50%); display: block; filter: drop-shadow(-18px 10px 30px #0003); }
+  .fig::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 22%; background: linear-gradient(transparent, var(--fade, transparent)); }
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; grid-template-rows: 56svh auto; }
+    .block, .fig { top: 0 !important; bottom: auto !important; right: 0 !important; width: 100% !important; height: 56svh; border-radius: 0 !important; clip-path: none !important; }
+    .text { grid-row: 2; padding: 34px 20px 50px; } .hero nav div a:not(:last-child) { display: none; }
+  }
+
+  /* C1 amber, closest to the reference */
+  #c1 { --acc: #ffb22e; --acc-text: #e59400; }
+  #c1 { --w: 40%; --rad: 0 0 0 32px; }
+  /* C2 blue block with the interactive wave inside it */
+  #c2 { --acc: #2350ff; --acc-text: #2350ff; --page: #f6f7fb; }
+  #c2 { --t: 96px; --b: 6vh; --r: 5vw; --w: 40%; --rad: 28px; }
+  #c2 .fig img { opacity: .97; }
+  /* C3 dark with spotlight block, black and white figure */
+  #c3 { --acc: #101114; --page: #000; --ink: #f5f5f7; --sub: #9a9aa1; --acc-text: #f5f5f7; }
+  #c3 { --w: 46%; --fade: #000; }
+  #c3 .block { background: radial-gradient(70% 70% at 55% 20%, #3a3b42, #101114 60%, #000); }
+  #c3 .fig img { filter: none; }
+  #c3 .btn { background: #2997ff; color: #fff; }
+  /* C4 violet block with neural-net dots behind the figure, rounded inset block */
+  #c4 { --acc: #5b3df5; --acc-text: #5b3df5; --page: #f4f2fb; }
+  #c4 { --t: 96px; --r: 6vw; --w: 36%; --rad: 32px 32px 0 0; }
+  /* C5 split diagonal, mint and ink */
+  #c5 { --acc: #c6f0d8; --acc-text: #0d7a49; --page: #ffffff; }
+  #c5 { --w: 50%; }
+  #c5 .block, #c5 .fig { clip-path: polygon(22% 0, 100% 0, 100% 100%, 0 100%); }
+  #c5 .fig img { left: 58%; }
+  #c5 .ring { position: absolute; z-index: 2; right: 15%; top: 50%; width: min(60vh, 34vw); aspect-ratio: 1; border-radius: 50%; border: 2px dashed #0d7a4955; transform: translateY(-50%); animation: spin 60s linear infinite; }
+  @keyframes spin { to { transform: translateY(-50%) rotate(1turn) } }
+  @media (max-width: 860px) { #c5 .ring { display: none; } #c5 .block { clip-path: none; } }
+
+  /* about section, continuing C1 */
+  .about { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 6vw; align-items: center; max-width: 1100px; margin: 0 auto; padding: 130px 6vw; }
+  .about .card { position: relative; }
+  .about .card::before { content: ""; position: absolute; left: -22px; top: 40px; bottom: -22px; width: 60%; border: 8px solid #ffb22e; border-right: 0; }
+  .about .card div { position: relative; background: #f3f3f5; aspect-ratio: 4 / 5; overflow: hidden; box-shadow: 0 30px 60px -30px #0004; }
+  .about .card img { position: absolute; bottom: 0; left: 50%; width: 120%; transform: translateX(-50%); }
+  .about h2 { font-size: clamp(34px, 3.4vw, 46px); font-weight: 700; letter-spacing: -.035em; }
+  .about h2::after { content: ""; display: block; width: 64px; height: 4px; border-radius: 4px; background: #ffb22e; margin-top: 12px; }
+  .about p { color: #555a66; margin-top: 18px; max-width: 36em; }
+  .about dl { display: grid; grid-template-columns: max-content 1fr; gap: 8px 24px; margin-top: 26px; font-size: 16px; } .about dt { font-weight: 600; } .about dd { color: #555a66; }
+  @media (max-width: 860px) { .about { grid-template-columns: 1fr; padding: 80px 24px; } }
+  @media (prefers-reduced-motion: reduce) { #c5 .ring { animation: none; } }
+</style>
+</head>
+<body>
+
+<section class="hero" id="c1" data-name="Amber block (closest to the Dribbble reference)">
+  <nav><b>Andy Seymour</b><div><a href="#">About</a><a href="#">Experience</a><a href="#">Projects</a><a href="#">Contact</a></div></nav>
+  <div class="text"><p class="hi">Hello,</p><h1>I'm <span>Andy Seymour</span></h1><p>Software engineer in London. I write trading strategies in C++ and Python at Gambit Research.</p><div class="row"><a class="btn" href="#">Get in touch</a><a class="btn ghost" href="#">Download CV</a></div></div>
+  <div class="block"></div>
+  <div class="fig"><img src="../img/me-cut.png" alt="Andy Seymour"></div>
+</section>
+<section class="about">
+  <div class="card"><div><img src="../img/me-cut.png" alt=""></div></div>
+  <div><h2>About me</h2><p>I joined Gambit Research in 2019 to lead the data team, moved to internal tools, and now write trading strategies in C++ and Python. Before that I spent four years at IBM and started out writing safety-critical software for the Typhoon and F-35 at BAE Systems.</p>
+    <dl><dt>Now</dt><dd>Strategy Development, Gambit Research</dd><dt>Based</dt><dd>London</dd><dt>Languages</dt><dd>C++, Python, TypeScript, SQL</dd><dt>Education</dt><dd>MSc Mathematics, first class, Leicester</dd></dl></div>
+</section>
+
+<section class="hero" id="c2" data-name="Blue block with interactive wave">
+  <nav><b>Andy Seymour</b><div><a href="#">Experience</a><a href="#">Projects</a><a href="#">Contact</a></div></nav>
+  <div class="text"><p class="hi">Hi, I'm</p><h1><span>Andy Seymour</span></h1><p>Software engineer. I write trading strategies in C++ and Python at Gambit Research.</p><div class="row"><a class="btn" href="#">Get in touch</a><a class="btn ghost" href="#">Experience</a></div>
+    <div class="facts"><div><b>12 yrs</b><span>engineering</span></div><div><b>C++</b><span>and Python</span></div><div><b>MSc</b><span>Mathematics</span></div></div></div>
+  <div class="block"><canvas class="wave" aria-hidden="true"></canvas></div>
+  <div class="fig"><img src="../img/me-cut.png" alt="Andy Seymour"></div>
+</section>
+
+<section class="hero" id="c3" data-name="Dark spotlight block">
+  <nav><b>Andy Seymour</b><div><a href="#">Experience</a><a href="#">Projects</a><a href="#">Contact</a></div></nav>
+  <div class="text"><p class="hi">Software engineer, London</p><h1>Andy Seymour</h1><p>I write trading strategies in C++ and Python at Gambit Research.</p><div class="row"><a class="btn" href="#">Get in touch</a><a href="#" style="color:#2997ff">See experience</a></div></div>
+  <div class="block"><canvas class="wave" aria-hidden="true"></canvas></div>
+  <div class="fig"><img src="../img/me-cut-bw.png" alt="Andy Seymour"></div>
+</section>
+
+<section class="hero" id="c4" data-name="Violet card with neural net">
+  <nav><b>Andy Seymour</b><div><a href="#">Experience</a><a href="#">Projects</a><a href="#">Contact</a></div></nav>
+  <div class="text"><p class="hi">Hello, I'm</p><h1>Andy <span>Seymour</span></h1><p>Software engineer in London. Trading strategies in C++ and Python at Gambit Research.</p><div class="row"><a class="btn" href="#" style="background:#5b3df5;color:#fff">Get in touch</a><a class="btn ghost" href="#">Download CV</a></div></div>
+  <div class="block"><canvas class="net" aria-hidden="true"></canvas></div>
+  <div class="fig"><img src="../img/me-cut.png" alt="Andy Seymour"></div>
+</section>
+
+<section class="hero" id="c5" data-name="Mint diagonal">
+  <nav><b>Andy Seymour</b><div><a href="#">Experience</a><a href="#">Projects</a><a href="#">Contact</a></div></nav>
+  <div class="text"><p class="hi">Hello,</p><h1>I'm Andy.<br><span>I build trading strategies.</span></h1><p>Software engineer at Gambit Research in London, writing C++ and Python. Previously IBM and BAE Systems.</p><div class="row"><a class="btn" href="#">Get in touch</a><a class="btn ghost" href="#">Download CV</a></div></div>
+  <div class="block"></div><div class="ring"></div>
+  <div class="fig"><img src="../img/me-cut.png" alt="Andy Seymour"></div>
+</section>
+
+<script src="fx.js"></script>
+<script src="wave2.js"></script>
+<script>
+document.querySelectorAll('.hero').forEach(s => s.prepend(Object.assign(document.createElement('span'), { className: 'tag', textContent: s.id.toUpperCase() + ' ' + s.dataset.name })))
+Wave2(document.querySelector('#c2 .wave'), { host: document.getElementById('c2'), dot: [255, 255, 255], glow: [255, 214, 102], line: '#ffd666', horizon: .5, spot: 0, alpha: .75 })
+Wave2(document.querySelector('#c3 .wave'), { host: document.getElementById('c3'), horizon: .62, alpha: .9 })
+FX.network(document.querySelector('#c4 .net'), { color: '#e3dcff', acc: '#ffffff' })
+// the figure drifts slightly against the pointer, so it sits in front of the block
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+if (!reduced && matchMedia('(min-width: 861px)').matches) document.querySelectorAll('.hero').forEach(s => {
+  const f = s.querySelector('.fig'), b = s.querySelector('.block')
+  s.addEventListener('pointermove', e => { const r = s.getBoundingClientRect(), nx = (e.clientX - r.left) / r.width - .5, ny = (e.clientY - r.top) / r.height - .5; f.firstElementChild.style.transform = `translate(calc(-50% + ${nx * -16}px), ${ny * -6}px)` })
+  s.addEventListener('pointerleave', () => { f.firstElementChild.style.transform = '' })
+})
+</script>
+</body>
+</html>
