@@ -24,7 +24,7 @@ a { color: var(--link); text-decoration: none; } a:hover { text-decoration: unde
 /* the shell: no window, just lines of text */
 .shell { margin-top: 22px; font: 15.5px/1.75 "Geist Mono", ui-monospace, monospace; max-width: 78ch; cursor: text; }
 .shell .ln { white-space: pre-wrap; overflow-wrap: anywhere; }
-#log { max-height: min(34vh, 290px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line) transparent; padding-right: 10px; -webkit-mask-image: linear-gradient(transparent, #000 28px); mask-image: linear-gradient(transparent, #000 28px); padding-top: 28px; }
+#log { max-height: min(34vh, 290px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line) transparent; padding-right: 10px; -webkit-mask-image: linear-gradient(transparent, #000 28px); mask-image: linear-gradient(transparent, #000 28px); padding-top: 28px; }
 /* Touch screens: no inner scroll box (it swallowed swipes meant for the page); each command replaces the last output instead. */
 @media (pointer: coarse) { #log { max-height: none; overflow: visible; -webkit-mask-image: none; mask-image: none; padding: 0; } }
 #log::-webkit-scrollbar { width: 6px; } #log::-webkit-scrollbar-thumb { background: var(--line); border-radius: 6px; }
