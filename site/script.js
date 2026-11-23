@@ -108,8 +108,10 @@ function sudo(args) {
 }
 
 const hist = []; let hi = 0
+const touch = matchMedia('(pointer: coarse)')
 function run(raw) {
   const line = raw.trim()
+  if (touch.matches) log.replaceChildren()
   print(`<span class="ps">andy<i>@</i>london <i>~</i> $</span> ${esc(line)}`, 'cmdline')
   if (!line) return
   hist.push(line); hi = hist.length
